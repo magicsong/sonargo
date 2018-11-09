@@ -24,12 +24,11 @@
 #   go-tests = true
 #   unused-packages = true
 
+required = ["github.com/magicsong/generate-go-for-sonarqube/cmd/main"]
+
 
 [prune]
   go-tests = true
   unused-packages = true
 
 
-[[constraint]]
-  branch = "master"
-  name = "github.com/magicsong/generate-go-for-sonarqube"
