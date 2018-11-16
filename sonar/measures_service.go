@@ -1,84 +1,53 @@
 // Get components or children with specified measures.
-package sonargo // import "github.com/magicsong/generate-go-for-sonarqube/pkg/sonargo"
+package sonargo
+
+import (
+	"net/http"
+)
 
 type MeasuresService struct {
 	client *Client
 }
 
-type Measures struct {
-	BaseComponent struct {
-		Key      string `json:"key,omitempty"`
-		Measures []struct {
-			Metric  string `json:"metric,omitempty"`
-			Periods []struct {
-				Index int64  `json:"index,omitempty"`
-				Value string `json:"value,omitempty"`
-			} `json:"periods,omitempty"`
-			Value string `json:"value,omitempty"`
-		} `json:"measures,omitempty"`
-		Name      string `json:"name,omitempty"`
-		Qualifier string `json:"qualifier,omitempty"`
-	} `json:"baseComponent,omitempty"`
-	Component struct {
-		Key      string `json:"key,omitempty"`
-		Language string `json:"language,omitempty"`
-		Measures []struct {
-			Metric  string `json:"metric,omitempty"`
-			Periods []struct {
-				Index int64  `json:"index,omitempty"`
-				Value string `json:"value,omitempty"`
-			} `json:"periods,omitempty"`
-			Value string `json:"value,omitempty"`
-		} `json:"measures,omitempty"`
-		Name      string `json:"name,omitempty"`
-		Path      string `json:"path,omitempty"`
-		Qualifier string `json:"qualifier,omitempty"`
-	} `json:"component,omitempty"`
-	Components []struct {
-		Key      string `json:"key,omitempty"`
-		Language string `json:"language,omitempty"`
-		Measures []struct {
-			Metric  string `json:"metric,omitempty"`
-			Periods []struct {
-				Index int64  `json:"index,omitempty"`
-				Value string `json:"value,omitempty"`
-			} `json:"periods,omitempty"`
-			Value string `json:"value,omitempty"`
-		} `json:"measures,omitempty"`
-		Name      string `json:"name,omitempty"`
-		Path      string `json:"path,omitempty"`
-		Qualifier string `json:"qualifier,omitempty"`
-	} `json:"components,omitempty"`
-	Measures []struct {
-		History []struct {
-			Date  string `json:"date,omitempty"`
-			Value string `json:"value,omitempty"`
-		} `json:"history,omitempty"`
-		Metric string `json:"metric,omitempty"`
-	} `json:"measures,omitempty"`
-	Metrics []struct {
-		BestValue             string `json:"bestValue,omitempty"`
-		Custom                bool   `json:"custom,omitempty"`
-		Description           string `json:"description,omitempty"`
-		Domain                string `json:"domain,omitempty"`
-		Hidden                bool   `json:"hidden,omitempty"`
-		HigherValuesAreBetter bool   `json:"higherValuesAreBetter,omitempty"`
-		Key                   string `json:"key,omitempty"`
-		Name                  string `json:"name,omitempty"`
-		Qualitative           bool   `json:"qualitative,omitempty"`
-		Type                  string `json:"type,omitempty"`
-	} `json:"metrics,omitempty"`
-	Paging struct {
-		PageIndex int64 `json:"pageIndex,omitempty"`
-		PageSize  int64 `json:"pageSize,omitempty"`
-		Total     int64 `json:"total,omitempty"`
-	} `json:"paging,omitempty"`
-	Periods []struct {
-		Date      string `json:"date,omitempty"`
-		Index     int64  `json:"index,omitempty"`
-		Mode      string `json:"mode,omitempty"`
-		Parameter string `json:"parameter,omitempty"`
-	} `json:"periods,omitempty"`
+type MeasuresComponentObject struct {
+	Component *Component `json:"component,omitempty"`
+	Metrics   []*Metric  `json:"metrics,omitempty"`
+	Periods   []*Period  `json:"periods,omitempty"`
+}
+
+type SonarMeasure struct {
+	Metric    string     `json:"metric,omitempty"`
+	Periods   []*Period  `json:"periods,omitempty"`
+	Value     string     `json:"value,omitempty"`
+	Histories []*History `json:"history,omitempty"`
+	BestValue bool       `json:"bestValue,omitempty"`
+}
+
+type Period struct {
+	Date      string `json:"date,omitempty"`
+	Index     int64  `json:"index,omitempty"`
+	Mode      string `json:"mode,omitempty"`
+	Parameter string `json:"parameter,omitempty"`
+	Value     string `json:"value,omitempty"`
+	BestValue bool   `json:"bestValue,omitempty"`
+}
+
+type MeasuresComponentTreeObject struct {
+	BaseComponent Component    `json:"baseComponent,omitempty"`
+	Components    []*Component `json:"components,omitempty"`
+	Metrics       []*Metric    `json:"metrics,omitempty"`
+	Paging        Paging       `json:"paging,omitempty"`
+	Periods       []*Period    `json:"periods,omitempty"`
+}
+
+type MeasuresSearchHistoryObject struct {
+	Measures []*SonarMeasure `json:"measures,omitempty"`
+	Paging   Paging          `json:"paging,omitempty"`
+}
+
+type History struct {
+	Date  string `json:"date,omitempty"`
+	Value string `json:"value,omitempty"`
 }
 
 type MeasuresComponentOption struct {
@@ -89,8 +58,8 @@ type MeasuresComponentOption struct {
 }
 
 // Component Return component with specified measures. The componentId or the component parameter must be provided.<br>Requires the following permission: 'Browse' on the project of specified component.
-func (s *MeasuresService) Component(opt *MeasuresComponentOption) (resp *Measures, err error) {
-	err := s.ValidateComponentOpt(opt)
+func (s *MeasuresService) Component(opt *MeasuresComponentOption) (v *MeasuresComponentObject, resp *http.Response, err error) {
+	err = s.ValidateComponentOpt(opt)
 	if err != nil {
 		return
 	}
@@ -98,9 +67,10 @@ func (s *MeasuresService) Component(opt *MeasuresComponentOption) (resp *Measure
 	if err != nil {
 		return
 	}
-	err = s.client.Do(req, resp)
+	v = new(MeasuresComponentObject)
+	resp, err = s.client.Do(req, v)
 	if err != nil {
-		return
+		return nil, resp, err
 	}
 	return
 }
@@ -122,9 +92,9 @@ type MeasuresComponentTreeOption struct {
 	Strategy         string `url:"strategy,omitempty"`         // Description:"Strategy to search for base component descendants:<ul><li>children: return the children components of the base component. Grandchildren components are not returned</li><li>all: return all the descendants components of the base component. Grandchildren are returned.</li><li>leaves: return all the descendant components (files, in general) which don't have other children. They are the leaves of the component tree.</li></ul>",ExampleValue:""
 }
 
-// Component_tree Navigate through components based on the chosen strategy with specified measures. The baseComponentId or the component parameter must be provided.<br>Requires the following permission: 'Browse' on the specified project.<br>When limiting search with the q parameter, directories are not returned.
-func (s *MeasuresService) ComponentTree(opt *MeasuresComponentTreeOption) (resp *Measures, err error) {
-	err := s.ValidateComponentTreeOpt(opt)
+// ComponentTree Navigate through components based on the chosen strategy with specified measures. The baseComponentId or the component parameter must be provided.<br>Requires the following permission: 'Browse' on the specified project.<br>When limiting search with the q parameter, directories are not returned.
+func (s *MeasuresService) ComponentTree(opt *MeasuresComponentTreeOption) (v *MeasuresComponentTreeObject, resp *http.Response, err error) {
+	err = s.ValidateComponentTreeOpt(opt)
 	if err != nil {
 		return
 	}
@@ -132,9 +102,10 @@ func (s *MeasuresService) ComponentTree(opt *MeasuresComponentTreeOption) (resp 
 	if err != nil {
 		return
 	}
-	err = s.client.Do(req, resp)
+	v = new(MeasuresComponentTreeObject)
+	resp, err = s.client.Do(req, v)
 	if err != nil {
-		return
+		return nil, resp, err
 	}
 	return
 }
@@ -148,9 +119,9 @@ type MeasuresSearchHistoryOption struct {
 	To        string `url:"to,omitempty"`        // Description:"Filter measures created before the given date (inclusive). <br>Either a date (server timezone) or datetime can be provided",ExampleValue:"2017-10-19 or 2017-10-19T13:00:00+0200"
 }
 
-// Search_history Search measures history of a component.<br>Measures are ordered chronologically.<br>Pagination applies to the number of measures for each metric.<br>Requires the following permission: 'Browse' on the specified component
-func (s *MeasuresService) SearchHistory(opt *MeasuresSearchHistoryOption) (resp *Measures, err error) {
-	err := s.ValidateSearchHistoryOpt(opt)
+// SearchHistory Search measures history of a component.<br>Measures are ordered chronologically.<br>Pagination applies to the number of measures for each metric.<br>Requires the following permission: 'Browse' on the specified component
+func (s *MeasuresService) SearchHistory(opt *MeasuresSearchHistoryOption) (v *MeasuresSearchHistoryObject, resp *http.Response, err error) {
+	err = s.ValidateSearchHistoryOpt(opt)
 	if err != nil {
 		return
 	}
@@ -158,9 +129,10 @@ func (s *MeasuresService) SearchHistory(opt *MeasuresSearchHistoryOption) (resp 
 	if err != nil {
 		return
 	}
-	err = s.client.Do(req, resp)
+	v = new(MeasuresSearchHistoryObject)
+	resp, err = s.client.Do(req, v)
 	if err != nil {
-		return
+		return nil, resp, err
 	}
 	return
 }

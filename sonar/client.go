@@ -10,12 +10,9 @@ type Client struct {
 	username, password, token string
 	authType                  authType
 	httpClient                *http.Client
-	Authentication            *AuthenticationService
 	Ce                        *CeService
 	Components                *ComponentsService
-	CustomMeasures            *CustomMeasuresService
 	Duplications              *DuplicationsService
-	Editions                  *EditionsService
 	Favorites                 *FavoritesService
 	Issues                    *IssuesService
 	Languages                 *LanguagesService
@@ -32,7 +29,7 @@ type Client struct {
 	ProjectTags               *ProjectTagsService
 	Projects                  *ProjectsService
 	Qualitygates              *QualitygatesService
-	Qualityprofiles           *QualityprofilesService
+	QualityProfiles           *QualityProfilesService
 	Rules                     *RulesService
 	Server                    *ServerService
 	Settings                  *SettingsService
@@ -42,7 +39,6 @@ type Client struct {
 	UserTokens                *UserTokensService
 	Users                     *UsersService
 	Webhooks                  *WebhooksService
-	Webservices               *WebservicesService
 }
 
 func NewClient(endpoint, username, password string) (*Client, error) {
@@ -54,12 +50,9 @@ func NewClient(endpoint, username, password string) (*Client, error) {
 			return nil, err
 		}
 	}
-	c.Authentication = &AuthenticationService{client: c}
 	c.Ce = &CeService{client: c}
 	c.Components = &ComponentsService{client: c}
-	c.CustomMeasures = &CustomMeasuresService{client: c}
 	c.Duplications = &DuplicationsService{client: c}
-	c.Editions = &EditionsService{client: c}
 	c.Favorites = &FavoritesService{client: c}
 	c.Issues = &IssuesService{client: c}
 	c.Languages = &LanguagesService{client: c}
@@ -76,7 +69,7 @@ func NewClient(endpoint, username, password string) (*Client, error) {
 	c.ProjectTags = &ProjectTagsService{client: c}
 	c.Projects = &ProjectsService{client: c}
 	c.Qualitygates = &QualitygatesService{client: c}
-	c.Qualityprofiles = &QualityprofilesService{client: c}
+	c.QualityProfiles = &QualityProfilesService{client: c}
 	c.Rules = &RulesService{client: c}
 	c.Server = &ServerService{client: c}
 	c.Settings = &SettingsService{client: c}
@@ -86,6 +79,5 @@ func NewClient(endpoint, username, password string) (*Client, error) {
 	c.UserTokens = &UserTokensService{client: c}
 	c.Users = &UsersService{client: c}
 	c.Webhooks = &WebhooksService{client: c}
-	c.Webservices = &WebservicesService{client: c}
 	return c, nil
 }

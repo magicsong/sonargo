@@ -1,0 +1,65 @@
+complexity	"It is the Cyclomatic Complexity calculated based on the number of paths through the code. Whenever the control flow of a function splits, the complexity counter gets incremented by one. Each function has a minimum complexity of 1. This calculation varies slightly by language because keywords and functionalities do."
+cognitive_complexity	How hard it is to understand the code's control flow. See the Cognitive Complexity White Paper for a complete description of the mathematical model applied to compute this measure.
+duplicated_blocks	Number of duplicated blocks of lines.
+duplicated_files	Number of files involved in duplications.
+duplicated_lines	Number of lines involved in duplications.
+duplicated_lines_density	= duplicated_lines / lines * 100
+new_violations	Number of issues raised for the first time in the New Code period.
+new_xxx_violations	"Number of issues of the specified severity raised for the first time in the New Code period, where xxx is one of: blocker, critical, major, minor, info."
+violations	Total count of issues in all states.
+xxx_issues	"Total count of issues of the specified severity, where xxx is one of: blocker, critical, major, minor, info."
+false_positive_issues	Total count of issues marked False Positive
+open_issues	Total count of issues in the Open state.
+confirmed_issues	Total count of issues in the Confirmed state.
+reopened_issues	Total count of issues in the Reopened state
+code_smells	Total count of Code Smell issues.
+new_code_smells	Total count of Code Smell issues raised for the first time in the New Code period.
+sqale_rating	(Formerly the SQALE rating.)\nRating given to your project related to the value of your Technical Debt Ratio. The default Maintainability Rating grid is:
+sqale_index	Effort to fix all Code Smells. The measure is stored in minutes in the database. An 8-hour day is assumed when values are shown in days.
+new_technical_debt	Effort to fix all Code Smells raised for the first time in the New Code period.
+sqale_debt_ratio	Ratio between the cost to develop the software and the cost to fix it. The Technical Debt Ratio formula is:\n\nRemediation cost / Development cost\n\nWhich can be restated as:\n\nRemediation cost / (Cost to develop 1 line of code * Number of lines of code)\n\nThe value of the cost to develop a line of code is 0.06 days.
+new_sqale_debt_ratio	Ratio between the cost to develop the code changed in the New Code period and the cost of the issues linked to it.
+alert_status	"State of the Quality Gate associated to your Project. Possible values are : ERROR, WARN, OK"
+quality_gate_details	"For all the conditions of your Quality Gate, you know which condition is failing and which is not."
+bugs	Number of bug issues.
+new_bugs	Number of new bug issues.
+reliability_rating	A = 0 Bugs\n\nB = at least 1 Minor Bug\n\nC = at least 1 Major Bug\n\nD = at least 1 Critical Bug\n\nE = at least 1 Blocker Bug  
+reliability_remediation_effort	Effort to fix all bug issues. The measure is stored in minutes in the DB. An 8-hour day is assumed when values are shown in days.
+new_reliability_remediation_effort	Same as Reliability remediation effort but on the code changed in the New Code period.
+vulnerabilities	Number of vulnerability issues.
+new_vulnerabilities	Number of new vulnerability issues.
+security_rating	A = 0 Vulnerabilities\n\nB = at least 1 Minor Vulnerability\n\nC = at least 1 Major Vulnerability\n\nD = at least 1 Critical Vulnerability\n\nE = at least 1 Blocker Vulnerability  
+security_remediation_effort	Effort to fix all vulnerability issues. The measure is stored in minutes in the DB. An 8-hour day is assumed when values are shown in days.
+new_security_remediation_effort	Same as Security remediation effort but on the code changed in the New Code period.
+classes	"Number of classes (including nested classes, interfaces, enums and annotations)."
+comment_lines	Number of lines containing either comment or commented-out code.
+comment_lines_density	Density of comment lines = Comment lines / (Lines of code + Comment lines) * 100
+directories	Number of directories.
+files	Number of files.
+lines	Number of physical lines (number of carriage returns).
+ncloc	Number of physical lines that contain at least one character which is neither a whitespace nor a tabulation nor part of a comment.
+ncloc_language_distribution	Non Commenting Lines of Code Distributed By Language
+functions	"Number of functions. Depending on the language, a function is either a function or a method or a paragraph."
+projects	Number of projects in a Portfolio.
+statements	Number of statements.
+branch_coverage	"On each line of code containing some boolean expressions, the condition coverage simply answers the following question: 'Has each boolean expression been evaluated both to true and false?'. This is the density of possible conditions in flow control structures that have been followed during unit tests execution."
+new_branch_coverage	Identical to Condition coverage but restricted to new / updated source code.
+branch_coverage_hits_data	List of covered conditions.
+conditions_by_line	Number of conditions by line.
+covered_conditions_by_line	Number of covered conditions by line.
+coverage	It is a mix of Line coverage and Condition coverage. Its goal is to provide an even more accurate answer to the following question: How much of the source code has been covered by the unit tests?
+new_coverage	Identical to Coverage but restricted to new / updated source code.
+new_line_coverage	Identical to Line coverage but restricted to new / updated source code.
+coverage_line_hits_data	List of covered lines.
+lines_to_cover	"Number of lines of code which could be covered by unit tests (for example, blank lines or full comments lines are not considered as lines to cover)."
+new_lines_to_cover	Identical to Lines to cover but restricted to new / updated source code.
+skipped_tests	Number of skipped unit tests.
+uncovered_conditions	Number of conditions which are not covered by unit tests.
+new_uncovered_conditions	Identical to Uncovered conditions but restricted to new / updated source code.
+uncovered_lines	Number of lines of code which are not covered by unit tests.
+new_uncovered_lines	Identical to Uncovered lines but restricted to new / updated source code.
+tests	Number of unit tests.
+test_execution_time	Time required to execute all the unit tests.
+test_errors	Number of unit tests that have failed.
+test_failures	Number of unit tests that have failed with an unexpected exception.
+test_success_density	Test success density = (Unit tests - (Unit test errors + Unit test failures)) / Unit tests * 100

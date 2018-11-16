@@ -32,3 +32,10 @@ required = ["github.com/magicsong/generate-go-for-sonarqube/cmd/main"]
   unused-packages = true
 
 
+[[override]]
+  name = "gopkg.in/fsnotify.v1"
+  source = "https://github.com/fsnotify/fsnotify.git"
+
+[[constraint]]
+  name = "github.com/davecgh/go-spew"
+  version = "1.1.1"

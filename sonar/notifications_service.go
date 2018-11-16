@@ -1,21 +1,25 @@
 // Manage notifications of the authenticated user
-package sonargo // import "github.com/magicsong/generate-go-for-sonarqube/pkg/sonargo"
+package sonargo
+
+import "net/http"
 
 type NotificationsService struct {
 	client *Client
 }
 
-type Notifications struct {
-	Channels      []string `json:"channels,omitempty"`
-	GlobalTypes   []string `json:"globalTypes,omitempty"`
-	Notifications []struct {
-		Channel      string `json:"channel,omitempty"`
-		Organization string `json:"organization,omitempty"`
-		Project      string `json:"project,omitempty"`
-		ProjectName  string `json:"projectName,omitempty"`
-		Type         string `json:"type,omitempty"`
-	} `json:"notifications,omitempty"`
-	PerProjectTypes []string `json:"perProjectTypes,omitempty"`
+type NotificationsListObject struct {
+	Channels        []string        `json:"channels,omitempty"`
+	GlobalTypes     []string        `json:"globalTypes,omitempty"`
+	Notifications   []*Notification `json:"notifications,omitempty"`
+	PerProjectTypes []string        `json:"perProjectTypes,omitempty"`
+}
+
+type Notification struct {
+	Channel      string `json:"channel,omitempty"`
+	Organization string `json:"organization,omitempty"`
+	Project      string `json:"project,omitempty"`
+	ProjectName  string `json:"projectName,omitempty"`
+	Type         string `json:"type,omitempty"`
 }
 
 type NotificationsAddOption struct {
@@ -26,8 +30,8 @@ type NotificationsAddOption struct {
 }
 
 // Add Add a notification for the authenticated user.<br>Requires one of the following permissions:<ul> <li>Authentication if no login is provided. If a project is provided, requires the 'Browse' permission on the specified project.</li> <li>System administration if a login is provided. If a project is provided, requires the 'Browse' permission on the specified project.</li></ul>
-func (s *NotificationsService) Add(opt *NotificationsAddOption) (resp *string, err error) {
-	err := s.ValidateAddOpt(opt)
+func (s *NotificationsService) Add(opt *NotificationsAddOption) (resp *http.Response, err error) {
+	err = s.ValidateAddOpt(opt)
 	if err != nil {
 		return
 	}
@@ -35,7 +39,7 @@ func (s *NotificationsService) Add(opt *NotificationsAddOption) (resp *string, e
 	if err != nil {
 		return
 	}
-	err = s.client.Do(req, resp)
+	resp, err = s.client.Do(req, nil)
 	if err != nil {
 		return
 	}
@@ -47,8 +51,8 @@ type NotificationsListOption struct {
 }
 
 // List List notifications of the authenticated user.<br>Requires one of the following permissions:<ul>  <li>Authentication if no login is provided</li>  <li>System administration if a login is provided</li></ul>
-func (s *NotificationsService) List(opt *NotificationsListOption) (resp *Notifications, err error) {
-	err := s.ValidateListOpt(opt)
+func (s *NotificationsService) List(opt *NotificationsListOption) (v *NotificationsListObject, resp *http.Response, err error) {
+	err = s.ValidateListOpt(opt)
 	if err != nil {
 		return
 	}
@@ -56,9 +60,10 @@ func (s *NotificationsService) List(opt *NotificationsListOption) (resp *Notific
 	if err != nil {
 		return
 	}
-	err = s.client.Do(req, resp)
+	v = new(NotificationsListObject)
+	resp, err = s.client.Do(req, v)
 	if err != nil {
-		return
+		return nil, resp, err
 	}
 	return
 }
@@ -71,8 +76,8 @@ type NotificationsRemoveOption struct {
 }
 
 // Remove Remove a notification for the authenticated user.<br>Requires one of the following permissions:<ul>  <li>Authentication if no login is provided</li>  <li>System administration if a login is provided</li></ul>
-func (s *NotificationsService) Remove(opt *NotificationsRemoveOption) (resp *string, err error) {
-	err := s.ValidateRemoveOpt(opt)
+func (s *NotificationsService) Remove(opt *NotificationsRemoveOption) (resp *http.Response, err error) {
+	err = s.ValidateRemoveOpt(opt)
 	if err != nil {
 		return
 	}
@@ -80,7 +85,7 @@ func (s *NotificationsService) Remove(opt *NotificationsRemoveOption) (resp *str
 	if err != nil {
 		return
 	}
-	err = s.client.Do(req, resp)
+	resp, err = s.client.Do(req, nil)
 	if err != nil {
 		return
 	}

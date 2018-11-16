@@ -1,5 +1,7 @@
 // Generate badges based on quality gates or measures
-package sonargo // import "github.com/magicsong/generate-go-for-sonarqube/pkg/sonargo"
+package sonargo
+
+import "net/http"
 
 type ProjectBadgesService struct {
 	client *Client
@@ -13,8 +15,8 @@ type ProjectBadgesMeasureOption struct {
 }
 
 // Measure Generate badge for project's measure as an SVG.<br/>Requires 'Browse' permission on the specified project.
-func (s *ProjectBadgesService) Measure(opt *ProjectBadgesMeasureOption) (resp *string, err error) {
-	err := s.ValidateMeasureOpt(opt)
+func (s *ProjectBadgesService) Measure(opt *ProjectBadgesMeasureOption) (v *string, resp *http.Response, err error) {
+	err = s.ValidateMeasureOpt(opt)
 	if err != nil {
 		return
 	}
@@ -22,9 +24,10 @@ func (s *ProjectBadgesService) Measure(opt *ProjectBadgesMeasureOption) (resp *s
 	if err != nil {
 		return
 	}
-	err = s.client.Do(req, resp)
+	v = new(string)
+	resp, err = s.client.Do(req, v)
 	if err != nil {
-		return
+		return nil, resp, err
 	}
 	return
 }
@@ -35,9 +38,9 @@ type ProjectBadgesQualityGateOption struct {
 	PullRequest string `url:"pullRequest,omitempty"` // Description:"Pull request id",ExampleValue:"5461"
 }
 
-// Quality_gate Generate badge for project's quality gate as an SVG.<br/>Requires 'Browse' permission on the specified project.
-func (s *ProjectBadgesService) QualityGate(opt *ProjectBadgesQualityGateOption) (resp *string, err error) {
-	err := s.ValidateQualityGateOpt(opt)
+// QualityGate Generate badge for project's quality gate as an SVG.<br/>Requires 'Browse' permission on the specified project.
+func (s *ProjectBadgesService) QualityGate(opt *ProjectBadgesQualityGateOption) (v *string, resp *http.Response, err error) {
+	err = s.ValidateQualityGateOpt(opt)
 	if err != nil {
 		return
 	}
@@ -45,9 +48,10 @@ func (s *ProjectBadgesService) QualityGate(opt *ProjectBadgesQualityGateOption) 
 	if err != nil {
 		return
 	}
-	err = s.client.Do(req, resp)
+	v = new(string)
+	resp, err = s.client.Do(req, v)
 	if err != nil {
-		return
+		return nil, resp, err
 	}
 	return
 }

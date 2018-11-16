@@ -1,58 +1,48 @@
 // Get information about a component (file, directory, project, ...) and its ancestors or descendants. Update a project or module key.
-package sonargo // import "github.com/magicsong/generate-go-for-sonarqube/pkg/sonargo"
+package sonargo
+
+import "net/http"
 
 type ComponentsService struct {
 	client *Client
 }
 
-type Components struct {
-	Ancestors []struct {
-		AnalysisDate string   `json:"analysisDate,omitempty"`
-		Description  string   `json:"description,omitempty"`
-		ID           string   `json:"id,omitempty"`
-		Key          string   `json:"key,omitempty"`
-		Name         string   `json:"name,omitempty"`
-		Organization string   `json:"organization,omitempty"`
-		Path         string   `json:"path,omitempty"`
-		Qualifier    string   `json:"qualifier,omitempty"`
-		Tags         []string `json:"tags,omitempty"`
-		Version      string   `json:"version,omitempty"`
-		Visibility   string   `json:"visibility,omitempty"`
-	} `json:"ancestors,omitempty"`
-	BaseComponent struct {
-		ID           string `json:"id,omitempty"`
-		Key          string `json:"key,omitempty"`
-		Name         string `json:"name,omitempty"`
-		Organization string `json:"organization,omitempty"`
-		Qualifier    string `json:"qualifier,omitempty"`
-	} `json:"baseComponent,omitempty"`
-	Component struct {
-		AnalysisDate   string `json:"analysisDate,omitempty"`
-		ID             string `json:"id,omitempty"`
-		Key            string `json:"key,omitempty"`
-		Language       string `json:"language,omitempty"`
-		LeakPeriodDate string `json:"leakPeriodDate,omitempty"`
-		Name           string `json:"name,omitempty"`
-		Organization   string `json:"organization,omitempty"`
-		Path           string `json:"path,omitempty"`
-		Qualifier      string `json:"qualifier,omitempty"`
-		Version        string `json:"version,omitempty"`
-	} `json:"component,omitempty"`
-	Components []struct {
-		ID           string `json:"id,omitempty"`
-		Key          string `json:"key,omitempty"`
-		Language     string `json:"language,omitempty"`
-		Name         string `json:"name,omitempty"`
-		Organization string `json:"organization,omitempty"`
-		Path         string `json:"path,omitempty"`
-		Project      string `json:"project,omitempty"`
-		Qualifier    string `json:"qualifier,omitempty"`
-	} `json:"components,omitempty"`
-	Paging struct {
-		PageIndex int64 `json:"pageIndex,omitempty"`
-		PageSize  int64 `json:"pageSize,omitempty"`
-		Total     int64 `json:"total,omitempty"`
-	} `json:"paging,omitempty"`
+type ComponentsSearchObject struct {
+	Components []*Component `json:"components,omitempty"`
+	Paging     *Paging      `json:"paging,omitempty"`
+}
+
+type ComponentsShowObject struct {
+	Ancestors []*Component `json:"ancestors,omitempty"`
+	Component *Component   `json:"component,omitempty"`
+}
+
+type Component struct {
+	AnalysisDate     string          `json:"analysisDate,omitempty"`
+	Description      string          `json:"description,omitempty"`
+	Enabled          bool            `json:"enabled,omitempty"`
+	ID               string          `json:"id,omitempty"`
+	Key              string          `json:"key,omitempty"`
+	Language         string          `json:"language,omitempty"`
+	LastAnalysisDate string          `json:"lastAnalysisDate,omitempty"`
+	LeakPeriodDate   string          `json:"leakPeriodDate,omitempty"`
+	LongName         string          `json:"longName,omitempty"`
+	Measures         []*SonarMeasure `json:"measures,omitempty"`
+	Name             string          `json:"name,omitempty"`
+	Organization     string          `json:"organization,omitempty"`
+	Path             string          `json:"path,omitempty"`
+	Project          string          `json:"project,omitempty"`
+	Qualifier        string          `json:"qualifier,omitempty"`
+	Tags             []string        `json:"tags,omitempty"`
+	UUID             string          `json:"uuid,omitempty"`
+	Version          string          `json:"version,omitempty"`
+	Visibility       string          `json:"visibility,omitempty"`
+}
+
+type ComponentsTreeObject struct {
+	BaseComponent Component    `json:"baseComponent,omitempty"`
+	Components    []*Component `json:"components,omitempty"`
+	Paging        Paging       `json:"paging,omitempty"`
 }
 
 type ComponentsSearchOption struct {
@@ -64,8 +54,8 @@ type ComponentsSearchOption struct {
 }
 
 // Search Search for components
-func (s *ComponentsService) Search(opt *ComponentsSearchOption) (resp *Components, err error) {
-	err := s.ValidateSearchOpt(opt)
+func (s *ComponentsService) Search(opt *ComponentsSearchOption) (v *ComponentsSearchObject, resp *http.Response, err error) {
+	err = s.ValidateSearchOpt(opt)
 	if err != nil {
 		return
 	}
@@ -73,9 +63,10 @@ func (s *ComponentsService) Search(opt *ComponentsSearchOption) (resp *Component
 	if err != nil {
 		return
 	}
-	err = s.client.Do(req, resp)
+	v = new(ComponentsSearchObject)
+	resp, err = s.client.Do(req, v)
 	if err != nil {
-		return
+		return nil, resp, err
 	}
 	return
 }
@@ -86,8 +77,8 @@ type ComponentsShowOption struct {
 }
 
 // Show Returns a component (file, directory, project, view…) and its ancestors. The ancestors are ordered from the parent to the root project. The 'componentId' or 'component' parameter must be provided.<br>Requires the following permission: 'Browse' on the project of the specified component.
-func (s *ComponentsService) Show(opt *ComponentsShowOption) (resp *Components, err error) {
-	err := s.ValidateShowOpt(opt)
+func (s *ComponentsService) Show(opt *ComponentsShowOption) (v *ComponentsShowObject, resp *http.Response, err error) {
+	err = s.ValidateShowOpt(opt)
 	if err != nil {
 		return
 	}
@@ -95,9 +86,10 @@ func (s *ComponentsService) Show(opt *ComponentsShowOption) (resp *Components, e
 	if err != nil {
 		return
 	}
-	err = s.client.Do(req, resp)
+	v = new(ComponentsShowObject)
+	resp, err = s.client.Do(req, v)
 	if err != nil {
-		return
+		return nil, resp, err
 	}
 	return
 }
@@ -115,8 +107,8 @@ type ComponentsTreeOption struct {
 }
 
 // Tree Navigate through components based on the chosen strategy. The componentId or the component parameter must be provided.<br>Requires the following permission: 'Browse' on the specified project.<br>When limiting search with the q parameter, directories are not returned.
-func (s *ComponentsService) Tree(opt *ComponentsTreeOption) (resp *Components, err error) {
-	err := s.ValidateTreeOpt(opt)
+func (s *ComponentsService) Tree(opt *ComponentsTreeOption) (v *ComponentsTreeObject, resp *http.Response, err error) {
+	err = s.ValidateTreeOpt(opt)
 	if err != nil {
 		return
 	}
@@ -124,9 +116,10 @@ func (s *ComponentsService) Tree(opt *ComponentsTreeOption) (resp *Components, e
 	if err != nil {
 		return
 	}
-	err = s.client.Do(req, resp)
+	v = new(ComponentsTreeObject)
+	resp, err = s.client.Do(req, v)
 	if err != nil {
-		return
+		return nil, resp, err
 	}
 	return
 }

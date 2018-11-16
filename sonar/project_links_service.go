@@ -1,22 +1,25 @@
 // Manage projects links.
-package sonargo // import "github.com/magicsong/generate-go-for-sonarqube/pkg/sonargo"
+package sonargo
+
+import "net/http"
 
 type ProjectLinksService struct {
 	client *Client
 }
 
-type ProjectLinks struct {
-	Link struct {
-		ID   string `json:"id,omitempty"`
-		Name string `json:"name,omitempty"`
-		URL  string `json:"url,omitempty"`
-	} `json:"link,omitempty"`
-	Links []struct {
-		ID   string `json:"id,omitempty"`
-		Name string `json:"name,omitempty"`
-		Type string `json:"type,omitempty"`
-		URL  string `json:"url,omitempty"`
-	} `json:"links,omitempty"`
+type ProjectLinksCreateObject struct {
+	Link *Link `json:"link,omitempty"`
+}
+
+type Link struct {
+	ID   string `json:"id,omitempty"`
+	Name string `json:"name,omitempty"`
+	URL  string `json:"url,omitempty"`
+	Type string `json:"type,omitempty"`
+}
+
+type ProjectLinksSearchObject struct {
+	Links []*Link `json:"links,omitempty"`
 }
 
 type ProjectLinksCreateOption struct {
@@ -27,8 +30,8 @@ type ProjectLinksCreateOption struct {
 }
 
 // Create Create a new project link.<br>Requires 'Administer' permission on the specified project, or global 'Administer' permission.
-func (s *ProjectLinksService) Create(opt *ProjectLinksCreateOption) (resp *ProjectLinks, err error) {
-	err := s.ValidateCreateOpt(opt)
+func (s *ProjectLinksService) Create(opt *ProjectLinksCreateOption) (v *ProjectLinksCreateObject, resp *http.Response, err error) {
+	err = s.ValidateCreateOpt(opt)
 	if err != nil {
 		return
 	}
@@ -36,9 +39,10 @@ func (s *ProjectLinksService) Create(opt *ProjectLinksCreateOption) (resp *Proje
 	if err != nil {
 		return
 	}
-	err = s.client.Do(req, resp)
+	v = new(ProjectLinksCreateObject)
+	resp, err = s.client.Do(req, v)
 	if err != nil {
-		return
+		return nil, resp, err
 	}
 	return
 }
@@ -48,8 +52,8 @@ type ProjectLinksDeleteOption struct {
 }
 
 // Delete Delete existing project link.<br>Requires 'Administer' permission on the specified project, or global 'Administer' permission.
-func (s *ProjectLinksService) Delete(opt *ProjectLinksDeleteOption) (resp *string, err error) {
-	err := s.ValidateDeleteOpt(opt)
+func (s *ProjectLinksService) Delete(opt *ProjectLinksDeleteOption) (resp *http.Response, err error) {
+	err = s.ValidateDeleteOpt(opt)
 	if err != nil {
 		return
 	}
@@ -57,7 +61,7 @@ func (s *ProjectLinksService) Delete(opt *ProjectLinksDeleteOption) (resp *strin
 	if err != nil {
 		return
 	}
-	err = s.client.Do(req, resp)
+	resp, err = s.client.Do(req, nil)
 	if err != nil {
 		return
 	}
@@ -70,8 +74,8 @@ type ProjectLinksSearchOption struct {
 }
 
 // Search List links of a project.<br>The 'projectId' or 'projectKey' must be provided.<br>Requires one of the following permissions:<ul><li>'Administer System'</li><li>'Administer' rights on the specified project</li><li>'Browse' on the specified project</li></ul>
-func (s *ProjectLinksService) Search(opt *ProjectLinksSearchOption) (resp *ProjectLinks, err error) {
-	err := s.ValidateSearchOpt(opt)
+func (s *ProjectLinksService) Search(opt *ProjectLinksSearchOption) (v *ProjectLinksSearchObject, resp *http.Response, err error) {
+	err = s.ValidateSearchOpt(opt)
 	if err != nil {
 		return
 	}
@@ -79,9 +83,10 @@ func (s *ProjectLinksService) Search(opt *ProjectLinksSearchOption) (resp *Proje
 	if err != nil {
 		return
 	}
-	err = s.client.Do(req, resp)
+	v = new(ProjectLinksSearchObject)
+	resp, err = s.client.Do(req, v)
 	if err != nil {
-		return
+		return nil, resp, err
 	}
 	return
 }

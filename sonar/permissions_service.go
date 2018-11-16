@@ -1,73 +1,57 @@
 // Manage permission templates, and the granting and revoking of permissions at the global and project levels.
-package sonargo // import "github.com/magicsong/generate-go-for-sonarqube/pkg/sonargo"
+package sonargo
+
+import "net/http"
 
 type PermissionsService struct {
 	client *Client
 }
 
-type Permissions struct {
-	DefaultTemplates []struct {
-		Qualifier  string `json:"qualifier,omitempty"`
-		TemplateID string `json:"templateId,omitempty"`
-	} `json:"defaultTemplates,omitempty"`
-	Paging struct {
-		PageIndex int64 `json:"pageIndex,omitempty"`
-		PageSize  int64 `json:"pageSize,omitempty"`
-		Total     int64 `json:"total,omitempty"`
-	} `json:"paging,omitempty"`
-	PermissionTemplate struct {
-		CreatedAt         string `json:"createdAt,omitempty"`
-		Description       string `json:"description,omitempty"`
-		ID                string `json:"id,omitempty"`
-		Name              string `json:"name,omitempty"`
-		ProjectKeyPattern string `json:"projectKeyPattern,omitempty"`
-		UpdatedAt         string `json:"updatedAt,omitempty"`
-	} `json:"permissionTemplate,omitempty"`
-	PermissionTemplates []struct {
-		CreatedAt   string `json:"createdAt,omitempty"`
-		Description string `json:"description,omitempty"`
-		ID          string `json:"id,omitempty"`
-		Name        string `json:"name,omitempty"`
-		Permissions []struct {
-			GroupsCount        int64  `json:"groupsCount,omitempty"`
-			Key                string `json:"key,omitempty"`
-			UsersCount         int64  `json:"usersCount,omitempty"`
-			WithProjectCreator bool   `json:"withProjectCreator,omitempty"`
-		} `json:"permissions,omitempty"`
-		ProjectKeyPattern string `json:"projectKeyPattern,omitempty"`
-		UpdatedAt         string `json:"updatedAt,omitempty"`
-	} `json:"permissionTemplates,omitempty"`
-	Permissions []struct {
-		Description string `json:"description,omitempty"`
-		GroupsCount int64  `json:"groupsCount,omitempty"`
-		Key         string `json:"key,omitempty"`
-		Name        string `json:"name,omitempty"`
-		UsersCount  int64  `json:"usersCount,omitempty"`
-	} `json:"permissions,omitempty"`
-	Projects []struct {
-		ID          string `json:"id,omitempty"`
-		Key         string `json:"key,omitempty"`
-		Name        string `json:"name,omitempty"`
-		Permissions []struct {
-			GroupsCount int64  `json:"groupsCount,omitempty"`
-			Key         string `json:"key,omitempty"`
-			UsersCount  int64  `json:"usersCount,omitempty"`
-		} `json:"permissions,omitempty"`
-		Qualifier string `json:"qualifier,omitempty"`
-	} `json:"projects,omitempty"`
+type PermissionsCreateTemplateObject struct {
+	PermissionTemplate *PermissionTemplate `json:"permissionTemplate,omitempty"`
+}
+
+type PermissionTemplate struct {
+	ID                string        `json:"id,omitempty"`
+	CreatedAt         string        `json:"createdAt,omitempty"`
+	UpdatedAt         string        `json:"updatedAt,omitempty"`
+	Description       string        `json:"description,omitempty"`
+	Name              string        `json:"name,omitempty"`
+	ProjectKeyPattern string        `json:"projectKeyPattern,omitempty"`
+	Permissions       []*Permission `json:"permissions,omitempty"`
+}
+
+type Permission struct {
+	Description        string `json:"description,omitempty"`
+	GroupsCount        int64  `json:"groupsCount,omitempty"`
+	Key                string `json:"key,omitempty"`
+	Name               string `json:"name,omitempty"`
+	UsersCount         int64  `json:"usersCount,omitempty"`
+	WithProjectCreator bool   `json:"withProjectCreator,omitempty"`
+}
+
+type PermissionsSearchTemplatesObject struct {
+	DefaultTemplates    []*DefaultTemplate    `json:"defaultTemplates,omitempty"`
+	PermissionTemplates []*PermissionTemplate `json:"permissionTemplates,omitempty"`
+	Permissions         []*Permission         `json:"permissions,omitempty"`
+}
+
+type DefaultTemplate struct {
+	Qualifier  string `json:"qualifier,omitempty"`
+	TemplateID string `json:"templateId,omitempty"`
 }
 
 type PermissionsAddGroupOption struct {
-	GroupId    string `url:"groupId,omitempty"`    // Description:"Group id",ExampleValue:"42"
+	GroupId    int    `url:"groupId,omitempty"`    // Description:"Group id",ExampleValue:"42"
 	GroupName  string `url:"groupName,omitempty"`  // Description:"Group name or 'anyone' (case insensitive)",ExampleValue:"sonar-administrators"
 	Permission string `url:"permission,omitempty"` // Description:"Permission<ul><li>Possible values for global permissions: admin, profileadmin, gateadmin, scan, provisioning</li><li>Possible values for project permissions admin, codeviewer, issueadmin, scan, user</li></ul>",ExampleValue:""
 	ProjectId  string `url:"projectId,omitempty"`  // Description:"Project id",ExampleValue:"ce4c03d6-430f-40a9-b777-ad877c00aa4d"
 	ProjectKey string `url:"projectKey,omitempty"` // Description:"Project key",ExampleValue:"my_project"
 }
 
-// Add_group Add permission to a group.<br /> This service defaults to global permissions, but can be limited to project permissions by providing project id or project key.<br /> The group name or group id must be provided. <br />Requires one of the following permissions:<ul><li>'Administer System'</li><li>'Administer' rights on the specified project</li></ul>
-func (s *PermissionsService) AddGroup(opt *PermissionsAddGroupOption) (resp *string, err error) {
-	err := s.ValidateAddGroupOpt(opt)
+// AddGroup Add permission to a group.<br /> This service defaults to global permissions, but can be limited to project permissions by providing project id or project key.<br /> The group name or group id must be provided. <br />Requires one of the following permissions:<ul><li>'Administer System'</li><li>'Administer' rights on the specified project</li></ul>
+func (s *PermissionsService) AddGroup(opt *PermissionsAddGroupOption) (resp *http.Response, err error) {
+	err = s.ValidateAddGroupOpt(opt)
 	if err != nil {
 		return
 	}
@@ -75,7 +59,7 @@ func (s *PermissionsService) AddGroup(opt *PermissionsAddGroupOption) (resp *str
 	if err != nil {
 		return
 	}
-	err = s.client.Do(req, resp)
+	resp, err = s.client.Do(req, nil)
 	if err != nil {
 		return
 	}
@@ -83,16 +67,16 @@ func (s *PermissionsService) AddGroup(opt *PermissionsAddGroupOption) (resp *str
 }
 
 type PermissionsAddGroupToTemplateOption struct {
-	GroupId      string `url:"groupId,omitempty"`      // Description:"Group id",ExampleValue:"42"
+	GroupId      int    `url:"groupId,omitempty"`      // Description:"Group id",ExampleValue:"42"
 	GroupName    string `url:"groupName,omitempty"`    // Description:"Group name or 'anyone' (case insensitive)",ExampleValue:"sonar-administrators"
 	Permission   string `url:"permission,omitempty"`   // Description:"Permission<ul><li>Possible values for project permissions admin, codeviewer, issueadmin, scan, user</li></ul>",ExampleValue:""
 	TemplateId   string `url:"templateId,omitempty"`   // Description:"Template id",ExampleValue:"AU-Tpxb--iU5OvuD2FLy"
 	TemplateName string `url:"templateName,omitempty"` // Description:"Template name",ExampleValue:"Default Permission Template for Projects"
 }
 
-// Add_group_to_template Add a group to a permission template.<br /> The group id or group name must be provided. <br />Requires the following permission: 'Administer System'.
-func (s *PermissionsService) AddGroupToTemplate(opt *PermissionsAddGroupToTemplateOption) (resp *string, err error) {
-	err := s.ValidateAddGroupToTemplateOpt(opt)
+// AddGroupToTemplate Add a group to a permission template.<br /> The group id or group name must be provided. <br />Requires the following permission: 'Administer System'.
+func (s *PermissionsService) AddGroupToTemplate(opt *PermissionsAddGroupToTemplateOption) (resp *http.Response, err error) {
+	err = s.ValidateAddGroupToTemplateOpt(opt)
 	if err != nil {
 		return
 	}
@@ -100,7 +84,7 @@ func (s *PermissionsService) AddGroupToTemplate(opt *PermissionsAddGroupToTempla
 	if err != nil {
 		return
 	}
-	err = s.client.Do(req, resp)
+	resp, err = s.client.Do(req, nil)
 	if err != nil {
 		return
 	}
@@ -113,9 +97,9 @@ type PermissionsAddProjectCreatorToTemplateOption struct {
 	TemplateName string `url:"templateName,omitempty"` // Description:"Template name",ExampleValue:"Default Permission Template for Projects"
 }
 
-// Add_project_creator_to_template Add a project creator to a permission template.<br>Requires the following permission: 'Administer System'.
-func (s *PermissionsService) AddProjectCreatorToTemplate(opt *PermissionsAddProjectCreatorToTemplateOption) (resp *string, err error) {
-	err := s.ValidateAddProjectCreatorToTemplateOpt(opt)
+// AddProjectCreatorToTemplate Add a project creator to a permission template.<br>Requires the following permission: 'Administer System'.
+func (s *PermissionsService) AddProjectCreatorToTemplate(opt *PermissionsAddProjectCreatorToTemplateOption) (resp *http.Response, err error) {
+	err = s.ValidateAddProjectCreatorToTemplateOpt(opt)
 	if err != nil {
 		return
 	}
@@ -123,7 +107,7 @@ func (s *PermissionsService) AddProjectCreatorToTemplate(opt *PermissionsAddProj
 	if err != nil {
 		return
 	}
-	err = s.client.Do(req, resp)
+	resp, err = s.client.Do(req, nil)
 	if err != nil {
 		return
 	}
@@ -137,9 +121,9 @@ type PermissionsAddUserOption struct {
 	ProjectKey string `url:"projectKey,omitempty"` // Description:"Project key",ExampleValue:"my_project"
 }
 
-// Add_user Add permission to a user.<br /> This service defaults to global permissions, but can be limited to project permissions by providing project id or project key.<br />Requires one of the following permissions:<ul><li>'Administer System'</li><li>'Administer' rights on the specified project</li></ul>
-func (s *PermissionsService) AddUser(opt *PermissionsAddUserOption) (resp *string, err error) {
-	err := s.ValidateAddUserOpt(opt)
+// AddUser Add permission to a user.<br /> This service defaults to global permissions, but can be limited to project permissions by providing project id or project key.<br />Requires one of the following permissions:<ul><li>'Administer System'</li><li>'Administer' rights on the specified project</li></ul>
+func (s *PermissionsService) AddUser(opt *PermissionsAddUserOption) (resp *http.Response, err error) {
+	err = s.ValidateAddUserOpt(opt)
 	if err != nil {
 		return
 	}
@@ -147,7 +131,7 @@ func (s *PermissionsService) AddUser(opt *PermissionsAddUserOption) (resp *strin
 	if err != nil {
 		return
 	}
-	err = s.client.Do(req, resp)
+	resp, err = s.client.Do(req, nil)
 	if err != nil {
 		return
 	}
@@ -161,9 +145,9 @@ type PermissionsAddUserToTemplateOption struct {
 	TemplateName string `url:"templateName,omitempty"` // Description:"Template name",ExampleValue:"Default Permission Template for Projects"
 }
 
-// Add_user_to_template Add a user to a permission template.<br /> Requires the following permission: 'Administer System'.
-func (s *PermissionsService) AddUserToTemplate(opt *PermissionsAddUserToTemplateOption) (resp *string, err error) {
-	err := s.ValidateAddUserToTemplateOpt(opt)
+// AddUserToTemplate Add a user to a permission template.<br /> Requires the following permission: 'Administer System'.
+func (s *PermissionsService) AddUserToTemplate(opt *PermissionsAddUserToTemplateOption) (resp *http.Response, err error) {
+	err = s.ValidateAddUserToTemplateOpt(opt)
 	if err != nil {
 		return
 	}
@@ -171,7 +155,7 @@ func (s *PermissionsService) AddUserToTemplate(opt *PermissionsAddUserToTemplate
 	if err != nil {
 		return
 	}
-	err = s.client.Do(req, resp)
+	resp, err = s.client.Do(req, nil)
 	if err != nil {
 		return
 	}
@@ -185,9 +169,9 @@ type PermissionsApplyTemplateOption struct {
 	TemplateName string `url:"templateName,omitempty"` // Description:"Template name",ExampleValue:"Default Permission Template for Projects"
 }
 
-// Apply_template Apply a permission template to one project.<br>The project id or project key must be provided.<br>The template id or name must be provided.<br>Requires the following permission: 'Administer System'.
-func (s *PermissionsService) ApplyTemplate(opt *PermissionsApplyTemplateOption) (resp *string, err error) {
-	err := s.ValidateApplyTemplateOpt(opt)
+// ApplyTemplate Apply a permission template to one project.<br>The project id or project key must be provided.<br>The template id or name must be provided.<br>Requires the following permission: 'Administer System'.
+func (s *PermissionsService) ApplyTemplate(opt *PermissionsApplyTemplateOption) (resp *http.Response, err error) {
+	err = s.ValidateApplyTemplateOpt(opt)
 	if err != nil {
 		return
 	}
@@ -195,7 +179,7 @@ func (s *PermissionsService) ApplyTemplate(opt *PermissionsApplyTemplateOption) 
 	if err != nil {
 		return
 	}
-	err = s.client.Do(req, resp)
+	resp, err = s.client.Do(req, nil)
 	if err != nil {
 		return
 	}
@@ -212,9 +196,9 @@ type PermissionsBulkApplyTemplateOption struct {
 	TemplateName      string `url:"templateName,omitempty"`      // Description:"Template name",ExampleValue:"Default Permission Template for Projects"
 }
 
-// Bulk_apply_template Apply a permission template to several projects.<br />The template id or name must be provided.<br />Requires the following permission: 'Administer System'.
-func (s *PermissionsService) BulkApplyTemplate(opt *PermissionsBulkApplyTemplateOption) (resp *string, err error) {
-	err := s.ValidateBulkApplyTemplateOpt(opt)
+// BulkApplyTemplate Apply a permission template to several projects.<br />The template id or name must be provided.<br />Requires the following permission: 'Administer System'.
+func (s *PermissionsService) BulkApplyTemplate(opt *PermissionsBulkApplyTemplateOption) (resp *http.Response, err error) {
+	err = s.ValidateBulkApplyTemplateOpt(opt)
 	if err != nil {
 		return
 	}
@@ -222,7 +206,7 @@ func (s *PermissionsService) BulkApplyTemplate(opt *PermissionsBulkApplyTemplate
 	if err != nil {
 		return
 	}
-	err = s.client.Do(req, resp)
+	resp, err = s.client.Do(req, nil)
 	if err != nil {
 		return
 	}
@@ -235,9 +219,9 @@ type PermissionsCreateTemplateOption struct {
 	ProjectKeyPattern string `url:"projectKeyPattern,omitempty"` // Description:"Project key pattern. Must be a valid Java regular expression",ExampleValue:".*\.finance\..*"
 }
 
-// Create_template Create a permission template.<br />Requires the following permission: 'Administer System'.
-func (s *PermissionsService) CreateTemplate(opt *PermissionsCreateTemplateOption) (resp *Permissions, err error) {
-	err := s.ValidateCreateTemplateOpt(opt)
+// CreateTemplate Create a permission template.<br />Requires the following permission: 'Administer System'.
+func (s *PermissionsService) CreateTemplate(opt *PermissionsCreateTemplateOption) (v *PermissionsCreateTemplateObject, resp *http.Response, err error) {
+	err = s.ValidateCreateTemplateOpt(opt)
 	if err != nil {
 		return
 	}
@@ -245,9 +229,10 @@ func (s *PermissionsService) CreateTemplate(opt *PermissionsCreateTemplateOption
 	if err != nil {
 		return
 	}
-	err = s.client.Do(req, resp)
+	v = new(PermissionsCreateTemplateObject)
+	resp, err = s.client.Do(req, v)
 	if err != nil {
-		return
+		return nil, resp, err
 	}
 	return
 }
@@ -257,9 +242,9 @@ type PermissionsDeleteTemplateOption struct {
 	TemplateName string `url:"templateName,omitempty"` // Description:"Template name",ExampleValue:"Default Permission Template for Projects"
 }
 
-// Delete_template Delete a permission template.<br />Requires the following permission: 'Administer System'.
-func (s *PermissionsService) DeleteTemplate(opt *PermissionsDeleteTemplateOption) (resp *string, err error) {
-	err := s.ValidateDeleteTemplateOpt(opt)
+// DeleteTemplate Delete a permission template.<br />Requires the following permission: 'Administer System'.
+func (s *PermissionsService) DeleteTemplate(opt *PermissionsDeleteTemplateOption) (resp *http.Response, err error) {
+	err = s.ValidateDeleteTemplateOpt(opt)
 	if err != nil {
 		return
 	}
@@ -267,24 +252,18 @@ func (s *PermissionsService) DeleteTemplate(opt *PermissionsDeleteTemplateOption
 	if err != nil {
 		return
 	}
-	err = s.client.Do(req, resp)
+	resp, err = s.client.Do(req, nil)
 	if err != nil {
 		return
 	}
 	return
 }
 
-type PermissionsRemoveGroupOption struct {
-	GroupId    string `url:"groupId,omitempty"`    // Description:"Group id",ExampleValue:"42"
-	GroupName  string `url:"groupName,omitempty"`  // Description:"Group name or 'anyone' (case insensitive)",ExampleValue:"sonar-administrators"
-	Permission string `url:"permission,omitempty"` // Description:"Permission<ul><li>Possible values for global permissions: admin, profileadmin, gateadmin, scan, provisioning</li><li>Possible values for project permissions admin, codeviewer, issueadmin, scan, user</li></ul>",ExampleValue:""
-	ProjectId  string `url:"projectId,omitempty"`  // Description:"Project id",ExampleValue:"ce4c03d6-430f-40a9-b777-ad877c00aa4d"
-	ProjectKey string `url:"projectKey,omitempty"` // Description:"Project key",ExampleValue:"my_project"
-}
+type PermissionsRemoveGroupOption PermissionsAddGroupOption
 
-// Remove_group Remove a permission from a group.<br /> This service defaults to global permissions, but can be limited to project permissions by providing project id or project key.<br /> The group id or group name must be provided, not both.<br />Requires one of the following permissions:<ul><li>'Administer System'</li><li>'Administer' rights on the specified project</li></ul>
-func (s *PermissionsService) RemoveGroup(opt *PermissionsRemoveGroupOption) (resp *string, err error) {
-	err := s.ValidateRemoveGroupOpt(opt)
+// RemoveGroup Remove a permission from a group.<br /> This service defaults to global permissions, but can be limited to project permissions by providing project id or project key.<br /> The group id or group name must be provided, not both.<br />Requires one of the following permissions:<ul><li>'Administer System'</li><li>'Administer' rights on the specified project</li></ul>
+func (s *PermissionsService) RemoveGroup(opt *PermissionsRemoveGroupOption) (resp *http.Response, err error) {
+	err = s.ValidateRemoveGroupOpt(opt)
 	if err != nil {
 		return
 	}
@@ -292,24 +271,18 @@ func (s *PermissionsService) RemoveGroup(opt *PermissionsRemoveGroupOption) (res
 	if err != nil {
 		return
 	}
-	err = s.client.Do(req, resp)
+	resp, err = s.client.Do(req, nil)
 	if err != nil {
 		return
 	}
 	return
 }
 
-type PermissionsRemoveGroupFromTemplateOption struct {
-	GroupId      string `url:"groupId,omitempty"`      // Description:"Group id",ExampleValue:"42"
-	GroupName    string `url:"groupName,omitempty"`    // Description:"Group name or 'anyone' (case insensitive)",ExampleValue:"sonar-administrators"
-	Permission   string `url:"permission,omitempty"`   // Description:"Permission<ul><li>Possible values for project permissions admin, codeviewer, issueadmin, scan, user</li></ul>",ExampleValue:""
-	TemplateId   string `url:"templateId,omitempty"`   // Description:"Template id",ExampleValue:"AU-Tpxb--iU5OvuD2FLy"
-	TemplateName string `url:"templateName,omitempty"` // Description:"Template name",ExampleValue:"Default Permission Template for Projects"
-}
+type PermissionsRemoveGroupFromTemplateOption PermissionsAddGroupToTemplateOption
 
-// Remove_group_from_template Remove a group from a permission template.<br /> The group id or group name must be provided. <br />Requires the following permission: 'Administer System'.
-func (s *PermissionsService) RemoveGroupFromTemplate(opt *PermissionsRemoveGroupFromTemplateOption) (resp *string, err error) {
-	err := s.ValidateRemoveGroupFromTemplateOpt(opt)
+// RemoveGroupFromTemplate Remove a group from a permission template.<br /> The group id or group name must be provided. <br />Requires the following permission: 'Administer System'.
+func (s *PermissionsService) RemoveGroupFromTemplate(opt *PermissionsRemoveGroupFromTemplateOption) (resp *http.Response, err error) {
+	err = s.ValidateRemoveGroupFromTemplateOpt(opt)
 	if err != nil {
 		return
 	}
@@ -317,22 +290,18 @@ func (s *PermissionsService) RemoveGroupFromTemplate(opt *PermissionsRemoveGroup
 	if err != nil {
 		return
 	}
-	err = s.client.Do(req, resp)
+	resp, err = s.client.Do(req, nil)
 	if err != nil {
 		return
 	}
 	return
 }
 
-type PermissionsRemoveProjectCreatorFromTemplateOption struct {
-	Permission   string `url:"permission,omitempty"`   // Description:"Permission<ul><li>Possible values for project permissions admin, codeviewer, issueadmin, scan, user</li></ul>",ExampleValue:""
-	TemplateId   string `url:"templateId,omitempty"`   // Description:"Template id",ExampleValue:"AU-Tpxb--iU5OvuD2FLy"
-	TemplateName string `url:"templateName,omitempty"` // Description:"Template name",ExampleValue:"Default Permission Template for Projects"
-}
+type PermissionsRemoveProjectCreatorFromTemplateOption PermissionsAddProjectCreatorToTemplateOption
 
-// Remove_project_creator_from_template Remove a project creator from a permission template.<br>Requires the following permission: 'Administer System'.
-func (s *PermissionsService) RemoveProjectCreatorFromTemplate(opt *PermissionsRemoveProjectCreatorFromTemplateOption) (resp *string, err error) {
-	err := s.ValidateRemoveProjectCreatorFromTemplateOpt(opt)
+// RemoveProjectCreatorFromTemplate Remove a project creator from a permission template.<br>Requires the following permission: 'Administer System'.
+func (s *PermissionsService) RemoveProjectCreatorFromTemplate(opt *PermissionsRemoveProjectCreatorFromTemplateOption) (resp *http.Response, err error) {
+	err = s.ValidateRemoveProjectCreatorFromTemplateOpt(opt)
 	if err != nil {
 		return
 	}
@@ -340,23 +309,18 @@ func (s *PermissionsService) RemoveProjectCreatorFromTemplate(opt *PermissionsRe
 	if err != nil {
 		return
 	}
-	err = s.client.Do(req, resp)
+	resp, err = s.client.Do(req, nil)
 	if err != nil {
 		return
 	}
 	return
 }
 
-type PermissionsRemoveUserOption struct {
-	Login      string `url:"login,omitempty"`      // Description:"User login",ExampleValue:"g.hopper"
-	Permission string `url:"permission,omitempty"` // Description:"Permission<ul><li>Possible values for global permissions: admin, profileadmin, gateadmin, scan, provisioning</li><li>Possible values for project permissions admin, codeviewer, issueadmin, scan, user</li></ul>",ExampleValue:""
-	ProjectId  string `url:"projectId,omitempty"`  // Description:"Project id",ExampleValue:"ce4c03d6-430f-40a9-b777-ad877c00aa4d"
-	ProjectKey string `url:"projectKey,omitempty"` // Description:"Project key",ExampleValue:"my_project"
-}
+type PermissionsRemoveUserOption PermissionsAddUserOption
 
-// Remove_user Remove permission from a user.<br /> This service defaults to global permissions, but can be limited to project permissions by providing project id or project key.<br /> Requires one of the following permissions:<ul><li>'Administer System'</li><li>'Administer' rights on the specified project</li></ul>
-func (s *PermissionsService) RemoveUser(opt *PermissionsRemoveUserOption) (resp *string, err error) {
-	err := s.ValidateRemoveUserOpt(opt)
+// RemoveUser Remove permission from a user.<br /> This service defaults to global permissions, but can be limited to project permissions by providing project id or project key.<br /> Requires one of the following permissions:<ul><li>'Administer System'</li><li>'Administer' rights on the specified project</li></ul>
+func (s *PermissionsService) RemoveUser(opt *PermissionsRemoveUserOption) (resp *http.Response, err error) {
+	err = s.ValidateRemoveUserOpt(opt)
 	if err != nil {
 		return
 	}
@@ -364,23 +328,18 @@ func (s *PermissionsService) RemoveUser(opt *PermissionsRemoveUserOption) (resp 
 	if err != nil {
 		return
 	}
-	err = s.client.Do(req, resp)
+	resp, err = s.client.Do(req, nil)
 	if err != nil {
 		return
 	}
 	return
 }
 
-type PermissionsRemoveUserFromTemplateOption struct {
-	Login        string `url:"login,omitempty"`        // Description:"User login",ExampleValue:"g.hopper"
-	Permission   string `url:"permission,omitempty"`   // Description:"Permission<ul><li>Possible values for project permissions admin, codeviewer, issueadmin, scan, user</li></ul>",ExampleValue:""
-	TemplateId   string `url:"templateId,omitempty"`   // Description:"Template id",ExampleValue:"AU-Tpxb--iU5OvuD2FLy"
-	TemplateName string `url:"templateName,omitempty"` // Description:"Template name",ExampleValue:"Default Permission Template for Projects"
-}
+type PermissionsRemoveUserFromTemplateOption PermissionsAddUserToTemplateOption
 
-// Remove_user_from_template Remove a user from a permission template.<br /> Requires the following permission: 'Administer System'.
-func (s *PermissionsService) RemoveUserFromTemplate(opt *PermissionsRemoveUserFromTemplateOption) (resp *string, err error) {
-	err := s.ValidateRemoveUserFromTemplateOpt(opt)
+// RemoveUserFromTemplate Remove a user from a permission template.<br /> Requires the following permission: 'Administer System'.
+func (s *PermissionsService) RemoveUserFromTemplate(opt *PermissionsRemoveUserFromTemplateOption) (resp *http.Response, err error) {
+	err = s.ValidateRemoveUserFromTemplateOpt(opt)
 	if err != nil {
 		return
 	}
@@ -388,46 +347,7 @@ func (s *PermissionsService) RemoveUserFromTemplate(opt *PermissionsRemoveUserFr
 	if err != nil {
 		return
 	}
-	err = s.client.Do(req, resp)
-	if err != nil {
-		return
-	}
-	return
-}
-
-// Search_global_permissions List global permissions. <br />Requires the following permission: 'Administer System'
-func (s *PermissionsService) SearchGlobalPermissions() (resp *Permissions, err error) {
-	req, err := s.client.NewRequest("GET", "permissions/search_global_permissions", opt)
-	if err != nil {
-		return
-	}
-	err = s.client.Do(req, resp)
-	if err != nil {
-		return
-	}
-	return
-}
-
-type PermissionsSearchProjectPermissionsOption struct {
-	P          string `url:"p,omitempty"`          // Description:"1-based page number",ExampleValue:"42"
-	ProjectId  string `url:"projectId,omitempty"`  // Description:"Project id",ExampleValue:"ce4c03d6-430f-40a9-b777-ad877c00aa4d"
-	ProjectKey string `url:"projectKey,omitempty"` // Description:"Project key",ExampleValue:"my_project"
-	Ps         string `url:"ps,omitempty"`         // Description:"Page size. Must be greater than 0.",ExampleValue:"20"
-	Q          string `url:"q,omitempty"`          // Description:"Limit search to: <ul><li>project names that contain the supplied string</li><li>project keys that are exactly the same as the supplied string</li></ul>",ExampleValue:"apac"
-	Qualifier  string `url:"qualifier,omitempty"`  // Description:"Project qualifier. Filter the results with the specified qualifier. Possible values are:<ul><li>TRK - Projects</li></ul>",ExampleValue:""
-}
-
-// Search_project_permissions List project permissions. A project can be a technical project, a view or a developer.<br />Requires one of the following permissions:<ul><li>'Administer System'</li><li>'Administer' rights on the specified project</li></ul>
-func (s *PermissionsService) SearchProjectPermissions(opt *PermissionsSearchProjectPermissionsOption) (resp *Permissions, err error) {
-	err := s.ValidateSearchProjectPermissionsOpt(opt)
-	if err != nil {
-		return
-	}
-	req, err := s.client.NewRequest("GET", "permissions/search_project_permissions", opt)
-	if err != nil {
-		return
-	}
-	err = s.client.Do(req, resp)
+	resp, err = s.client.Do(req, nil)
 	if err != nil {
 		return
 	}
@@ -438,9 +358,9 @@ type PermissionsSearchTemplatesOption struct {
 	Q string `url:"q,omitempty"` // Description:"Limit search to permission template names that contain the supplied string.",ExampleValue:"defau"
 }
 
-// Search_templates List permission templates.<br />Requires the following permission: 'Administer System'.
-func (s *PermissionsService) SearchTemplates(opt *PermissionsSearchTemplatesOption) (resp *Permissions, err error) {
-	err := s.ValidateSearchTemplatesOpt(opt)
+// SearchTemplates List permission templates.<br />Requires the following permission: 'Administer System'.
+func (s *PermissionsService) SearchTemplates(opt *PermissionsSearchTemplatesOption) (v *PermissionsSearchTemplatesObject, resp *http.Response, err error) {
+	err = s.ValidateSearchTemplatesOpt(opt)
 	if err != nil {
 		return
 	}
@@ -448,9 +368,10 @@ func (s *PermissionsService) SearchTemplates(opt *PermissionsSearchTemplatesOpti
 	if err != nil {
 		return
 	}
-	err = s.client.Do(req, resp)
+	v = new(PermissionsSearchTemplatesObject)
+	resp, err = s.client.Do(req, v)
 	if err != nil {
-		return
+		return nil, resp, err
 	}
 	return
 }
@@ -461,9 +382,9 @@ type PermissionsSetDefaultTemplateOption struct {
 	TemplateName string `url:"templateName,omitempty"` // Description:"Template name",ExampleValue:"Default Permission Template for Projects"
 }
 
-// Set_default_template Set a permission template as default.<br />Requires the following permission: 'Administer System'.
-func (s *PermissionsService) SetDefaultTemplate(opt *PermissionsSetDefaultTemplateOption) (resp *string, err error) {
-	err := s.ValidateSetDefaultTemplateOpt(opt)
+// SetDefaultTemplate Set a permission template as default.<br />Requires the following permission: 'Administer System'.
+func (s *PermissionsService) SetDefaultTemplate(opt *PermissionsSetDefaultTemplateOption) (resp *http.Response, err error) {
+	err = s.ValidateSetDefaultTemplateOpt(opt)
 	if err != nil {
 		return
 	}
@@ -471,7 +392,7 @@ func (s *PermissionsService) SetDefaultTemplate(opt *PermissionsSetDefaultTempla
 	if err != nil {
 		return
 	}
-	err = s.client.Do(req, resp)
+	resp, err = s.client.Do(req, nil)
 	if err != nil {
 		return
 	}
@@ -485,9 +406,9 @@ type PermissionsUpdateTemplateOption struct {
 	ProjectKeyPattern string `url:"projectKeyPattern,omitempty"` // Description:"Project key pattern. Must be a valid Java regular expression",ExampleValue:".*\.finance\..*"
 }
 
-// Update_template Update a permission template.<br />Requires the following permission: 'Administer System'.
-func (s *PermissionsService) UpdateTemplate(opt *PermissionsUpdateTemplateOption) (resp *Permissions, err error) {
-	err := s.ValidateUpdateTemplateOpt(opt)
+// UpdateTemplate Update a permission template.<br />Requires the following permission: 'Administer System'.
+func (s *PermissionsService) UpdateTemplate(opt *PermissionsUpdateTemplateOption) (v *PermissionsCreateTemplateObject, resp *http.Response, err error) {
+	err = s.ValidateUpdateTemplateOpt(opt)
 	if err != nil {
 		return
 	}
@@ -495,9 +416,10 @@ func (s *PermissionsService) UpdateTemplate(opt *PermissionsUpdateTemplateOption
 	if err != nil {
 		return
 	}
-	err = s.client.Do(req, resp)
+	v = new(PermissionsCreateTemplateObject)
+	resp, err = s.client.Do(req, v)
 	if err != nil {
-		return
+		return nil, resp, err
 	}
 	return
 }

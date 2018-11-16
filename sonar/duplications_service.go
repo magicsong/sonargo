@@ -1,35 +1,37 @@
 // Get duplication information for a project.
-package sonargo // import "github.com/magicsong/generate-go-for-sonarqube/pkg/sonargo"
+package sonargo
+
+import "net/http"
 
 type DuplicationsService struct {
 	client *Client
 }
 
-type Duplications struct {
-	Duplications []struct {
-		Blocks []struct {
-			Ref  string `json:"_ref,omitempty"`
-			From int64  `json:"from,omitempty"`
-			Size int64  `json:"size,omitempty"`
-		} `json:"blocks,omitempty"`
-	} `json:"duplications,omitempty"`
-	Files struct {
-		One struct {
-			Key         string `json:"key,omitempty"`
-			Name        string `json:"name,omitempty"`
-			ProjectName string `json:"projectName,omitempty"`
-		} `json:"1,omitempty"`
-		Two struct {
-			Key         string `json:"key,omitempty"`
-			Name        string `json:"name,omitempty"`
-			ProjectName string `json:"projectName,omitempty"`
-		} `json:"2,omitempty"`
-		Three struct {
-			Key         string `json:"key,omitempty"`
-			Name        string `json:"name,omitempty"`
-			ProjectName string `json:"projectName,omitempty"`
-		} `json:"3,omitempty"`
-	} `json:"files,omitempty"`
+type DuplicationsShowObject struct {
+	Duplications []*Duplication `json:"duplications,omitempty"`
+	Files        *Files         `json:"files,omitempty"`
+}
+
+type Block struct {
+	Ref  string `json:"_ref,omitempty"`
+	From int64  `json:"from,omitempty"`
+	Size int64  `json:"size,omitempty"`
+}
+
+type Duplication struct {
+	Blocks []*Block `json:"blocks,omitempty"`
+}
+
+type Files struct {
+	One   *File `json:"1,omitempty"`
+	Two   *File `json:"2,omitempty"`
+	Three *File `json:"3,omitempty"`
+}
+
+type File struct {
+	Key         string `json:"key,omitempty"`
+	Name        string `json:"name,omitempty"`
+	ProjectName string `json:"projectName,omitempty"`
 }
 
 type DuplicationsShowOption struct {
@@ -38,8 +40,8 @@ type DuplicationsShowOption struct {
 }
 
 // Show Get duplications. Require Browse permission on file's project
-func (s *DuplicationsService) Show(opt *DuplicationsShowOption) (resp *Duplications, err error) {
-	err := s.ValidateShowOpt(opt)
+func (s *DuplicationsService) Show(opt *DuplicationsShowOption) (v *DuplicationsShowObject, resp *http.Response, err error) {
+	err = s.ValidateShowOpt(opt)
 	if err != nil {
 		return
 	}
@@ -47,9 +49,10 @@ func (s *DuplicationsService) Show(opt *DuplicationsShowOption) (resp *Duplicati
 	if err != nil {
 		return
 	}
-	err = s.client.Do(req, resp)
+	v = new(DuplicationsShowObject)
+	resp, err = s.client.Do(req, v)
 	if err != nil {
-		return
+		return nil, resp, err
 	}
 	return
 }

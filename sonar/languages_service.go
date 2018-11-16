@@ -1,25 +1,29 @@
 // Get the list of programming languages supported in this instance.
-package sonargo // import "github.com/magicsong/generate-go-for-sonarqube/pkg/sonargo"
+package sonargo
+
+import "net/http"
 
 type LanguagesService struct {
 	client *Client
 }
 
-type Languages struct {
-	Languages []struct {
-		Key  string `json:"key,omitempty"`
-		Name string `json:"name,omitempty"`
-	} `json:"languages,omitempty"`
+type LanguagesListObject struct {
+	Languages []*Language `json:"languages,omitempty"`
+}
+
+type Language struct {
+	Key  string `json:"key,omitempty"`
+	Name string `json:"name,omitempty"`
 }
 
 type LanguagesListOption struct {
-	Ps string `url:"ps,omitempty"` // Description:"The size of the list to return, 0 for all languages",ExampleValue:"25"
+	Ps int    `url:"ps,omitempty"` // Description:"The size of the list to return, 0 for all languages",ExampleValue:"25"
 	Q  string `url:"q,omitempty"`  // Description:"A pattern to match language keys/names against",ExampleValue:"java"
 }
 
 // List List supported programming languages
-func (s *LanguagesService) List(opt *LanguagesListOption) (resp *Languages, err error) {
-	err := s.ValidateListOpt(opt)
+func (s *LanguagesService) List(opt *LanguagesListOption) (v *LanguagesListObject, resp *http.Response, err error) {
+	err = s.ValidateListOpt(opt)
 	if err != nil {
 		return
 	}
@@ -27,9 +31,10 @@ func (s *LanguagesService) List(opt *LanguagesListOption) (resp *Languages, err 
 	if err != nil {
 		return
 	}
-	err = s.client.Do(req, resp)
+	v = new(LanguagesListObject)
+	resp, err = s.client.Do(req, v)
 	if err != nil {
-		return
+		return nil, resp, err
 	}
 	return
 }

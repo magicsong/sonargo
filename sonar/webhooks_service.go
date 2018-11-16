@@ -1,49 +1,48 @@
 // Webhooks allow to notify external services when a project analysis is done
-package sonargo // import "github.com/magicsong/generate-go-for-sonarqube/pkg/sonargo"
+package sonargo
+
+import "net/http"
 
 type WebhooksService struct {
 	client *Client
 }
 
-type Webhooks struct {
-	Deliveries []struct {
-		At           string `json:"at,omitempty"`
-		CeTaskID     string `json:"ceTaskId,omitempty"`
-		ComponentKey string `json:"componentKey,omitempty"`
-		DurationMs   int64  `json:"durationMs,omitempty"`
-		HTTPStatus   int64  `json:"httpStatus,omitempty"`
-		ID           string `json:"id,omitempty"`
-		Name         string `json:"name,omitempty"`
-		Success      bool   `json:"success,omitempty"`
-		URL          string `json:"url,omitempty"`
-	} `json:"deliveries,omitempty"`
-	Delivery struct {
-		At           string `json:"at,omitempty"`
-		CeTaskID     string `json:"ceTaskId,omitempty"`
-		ComponentKey string `json:"componentKey,omitempty"`
-		DurationMs   int64  `json:"durationMs,omitempty"`
-		HTTPStatus   int64  `json:"httpStatus,omitempty"`
-		ID           string `json:"id,omitempty"`
-		Name         string `json:"name,omitempty"`
-		Payload      string `json:"payload,omitempty"`
-		Success      bool   `json:"success,omitempty"`
-		URL          string `json:"url,omitempty"`
-	} `json:"delivery,omitempty"`
-	Paging struct {
-		PageIndex int64 `json:"pageIndex,omitempty"`
-		PageSize  int64 `json:"pageSize,omitempty"`
-		Total     int64 `json:"total,omitempty"`
-	} `json:"paging,omitempty"`
-	Webhook struct {
-		Key  string `json:"key,omitempty"`
-		Name string `json:"name,omitempty"`
-		URL  string `json:"url,omitempty"`
-	} `json:"webhook,omitempty"`
-	Webhooks []struct {
-		Key  string `json:"key,omitempty"`
-		Name string `json:"name,omitempty"`
-		URL  string `json:"url,omitempty"`
-	} `json:"webhooks,omitempty"`
+type WebhooksCreateObject struct {
+	Webhook *Webhook `json:"webhook,omitempty"`
+}
+
+type Webhook struct {
+	Key            string    `json:"key,omitempty"`
+	Name           string    `json:"name,omitempty"`
+	URL            string    `json:"url,omitempty"`
+	LatestDelivery *Delivery `json:"latestDelivery,omitempty"`
+}
+
+type WebhooksDeliveriesObject struct {
+	Deliveries []*Delivery `json:"deliveries,omitempty"`
+	Paging     Paging      `json:"paging,omitempty"`
+}
+
+type Delivery struct {
+	At              string `json:"at,omitempty"`
+	CeTaskID        string `json:"ceTaskId,omitempty"`
+	ComponentKey    string `json:"componentKey,omitempty"`
+	DurationMs      int64  `json:"durationMs,omitempty"`
+	HTTPStatus      int64  `json:"httpStatus,omitempty"`
+	ID              string `json:"id,omitempty"`
+	Name            string `json:"name,omitempty"`
+	Payload         string `json:"payload,omitempty"`
+	Success         bool   `json:"success,omitempty"`
+	URL             string `json:"url,omitempty"`
+	ErrorStackTrace string `json:"errorStacktrace,omitempty"`
+}
+
+type WebhooksDeliveryObject struct {
+	Delivery *Delivery `json:"delivery,omitempty"`
+}
+
+type WebhooksListObject struct {
+	Webhooks []*Webhook `json:"webhooks,omitempty"`
 }
 
 type WebhooksCreateOption struct {
@@ -53,8 +52,8 @@ type WebhooksCreateOption struct {
 }
 
 // Create Create a Webhook.<br>Requires 'Administer' permission on the specified project, or global 'Administer' permission.
-func (s *WebhooksService) Create(opt *WebhooksCreateOption) (resp *Webhooks, err error) {
-	err := s.ValidateCreateOpt(opt)
+func (s *WebhooksService) Create(opt *WebhooksCreateOption) (v *WebhooksCreateObject, resp *http.Response, err error) {
+	err = s.ValidateCreateOpt(opt)
 	if err != nil {
 		return
 	}
@@ -62,9 +61,10 @@ func (s *WebhooksService) Create(opt *WebhooksCreateOption) (resp *Webhooks, err
 	if err != nil {
 		return
 	}
-	err = s.client.Do(req, resp)
+	v = new(WebhooksCreateObject)
+	resp, err = s.client.Do(req, v)
 	if err != nil {
-		return
+		return nil, resp, err
 	}
 	return
 }
@@ -74,8 +74,8 @@ type WebhooksDeleteOption struct {
 }
 
 // Delete Delete a Webhook.<br>Requires 'Administer' permission on the specified project, or global 'Administer' permission.
-func (s *WebhooksService) Delete(opt *WebhooksDeleteOption) (resp *string, err error) {
-	err := s.ValidateDeleteOpt(opt)
+func (s *WebhooksService) Delete(opt *WebhooksDeleteOption) (resp *http.Response, err error) {
+	err = s.ValidateDeleteOpt(opt)
 	if err != nil {
 		return
 	}
@@ -83,7 +83,7 @@ func (s *WebhooksService) Delete(opt *WebhooksDeleteOption) (resp *string, err e
 	if err != nil {
 		return
 	}
-	err = s.client.Do(req, resp)
+	resp, err = s.client.Do(req, nil)
 	if err != nil {
 		return
 	}
@@ -99,8 +99,8 @@ type WebhooksDeliveriesOption struct {
 }
 
 // Deliveries Get the recent deliveries for a specified project or Compute Engine task.<br/>Require 'Administer' permission on the related project.<br/>Note that additional information are returned by api/webhooks/delivery.
-func (s *WebhooksService) Deliveries(opt *WebhooksDeliveriesOption) (resp *Webhooks, err error) {
-	err := s.ValidateDeliveriesOpt(opt)
+func (s *WebhooksService) Deliveries(opt *WebhooksDeliveriesOption) (v *WebhooksDeliveriesObject, resp *http.Response, err error) {
+	err = s.ValidateDeliveriesOpt(opt)
 	if err != nil {
 		return
 	}
@@ -108,9 +108,10 @@ func (s *WebhooksService) Deliveries(opt *WebhooksDeliveriesOption) (resp *Webho
 	if err != nil {
 		return
 	}
-	err = s.client.Do(req, resp)
+	v = new(WebhooksDeliveriesObject)
+	resp, err = s.client.Do(req, v)
 	if err != nil {
-		return
+		return nil, resp, err
 	}
 	return
 }
@@ -120,8 +121,8 @@ type WebhooksDeliveryOption struct {
 }
 
 // Delivery Get a webhook delivery by its id.<br/>Require 'Administer System' permission.<br/>Note that additional information are returned by api/webhooks/delivery.
-func (s *WebhooksService) Delivery(opt *WebhooksDeliveryOption) (resp *Webhooks, err error) {
-	err := s.ValidateDeliveryOpt(opt)
+func (s *WebhooksService) Delivery(opt *WebhooksDeliveryOption) (v *WebhooksDeliveryObject, resp *http.Response, err error) {
+	err = s.ValidateDeliveryOpt(opt)
 	if err != nil {
 		return
 	}
@@ -129,9 +130,10 @@ func (s *WebhooksService) Delivery(opt *WebhooksDeliveryOption) (resp *Webhooks,
 	if err != nil {
 		return
 	}
-	err = s.client.Do(req, resp)
+	v = new(WebhooksDeliveryObject)
+	resp, err = s.client.Do(req, v)
 	if err != nil {
-		return
+		return nil, resp, err
 	}
 	return
 }
@@ -141,8 +143,8 @@ type WebhooksListOption struct {
 }
 
 // List Search for global webhooks or project webhooks. Webhooks are ordered by name.<br>Requires 'Administer' permission on the specified project, or global 'Administer' permission.
-func (s *WebhooksService) List(opt *WebhooksListOption) (resp *Webhooks, err error) {
-	err := s.ValidateListOpt(opt)
+func (s *WebhooksService) List(opt *WebhooksListOption) (v *WebhooksListObject, resp *http.Response, err error) {
+	err = s.ValidateListOpt(opt)
 	if err != nil {
 		return
 	}
@@ -150,9 +152,10 @@ func (s *WebhooksService) List(opt *WebhooksListOption) (resp *Webhooks, err err
 	if err != nil {
 		return
 	}
-	err = s.client.Do(req, resp)
+	v = new(WebhooksListObject)
+	resp, err = s.client.Do(req, v)
 	if err != nil {
-		return
+		return nil, resp, err
 	}
 	return
 }
@@ -164,8 +167,8 @@ type WebhooksUpdateOption struct {
 }
 
 // Update Update a Webhook.<br>Requires 'Administer' permission on the specified project, or global 'Administer' permission.
-func (s *WebhooksService) Update(opt *WebhooksUpdateOption) (resp *string, err error) {
-	err := s.ValidateUpdateOpt(opt)
+func (s *WebhooksService) Update(opt *WebhooksUpdateOption) (resp *http.Response, err error) {
+	err = s.ValidateUpdateOpt(opt)
 	if err != nil {
 		return
 	}
@@ -173,7 +176,7 @@ func (s *WebhooksService) Update(opt *WebhooksUpdateOption) (resp *string, err e
 	if err != nil {
 		return
 	}
-	err = s.client.Do(req, resp)
+	resp, err = s.client.Do(req, nil)
 	if err != nil {
 		return
 	}

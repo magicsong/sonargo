@@ -1,106 +1,91 @@
 // Manage quality profiles.
-package sonargo // import "github.com/magicsong/generate-go-for-sonarqube/pkg/sonargo"
+package sonargo
 
-type QualityprofilesService struct {
+import (
+	"net/http"
+)
+
+type QualityProfilesService struct {
 	client *Client
 }
-
-type Qualityprofiles struct {
-	Actions struct {
-		Create bool `json:"create,omitempty"`
-	} `json:"actions,omitempty"`
-	Ancestors []struct {
-		ActiveRuleCount int64  `json:"activeRuleCount,omitempty"`
-		IsBuiltIn       bool   `json:"isBuiltIn,omitempty"`
-		Key             string `json:"key,omitempty"`
-		Name            string `json:"name,omitempty"`
-		Parent          string `json:"parent,omitempty"`
-	} `json:"ancestors,omitempty"`
-	Children []struct {
-		ActiveRuleCount     int64  `json:"activeRuleCount,omitempty"`
-		IsBuiltIn           bool   `json:"isBuiltIn,omitempty"`
-		Key                 string `json:"key,omitempty"`
-		Name                string `json:"name,omitempty"`
-		OverridingRuleCount int64  `json:"overridingRuleCount,omitempty"`
-	} `json:"children,omitempty"`
-	Events []struct {
-		Action      string `json:"action,omitempty"`
-		AuthorLogin string `json:"authorLogin,omitempty"`
-		AuthorName  string `json:"authorName,omitempty"`
-		Date        string `json:"date,omitempty"`
-		Params      struct {
-			Format   string `json:"format,omitempty"`
-			Severity string `json:"severity,omitempty"`
-		} `json:"params,omitempty"`
-		RuleKey  string `json:"ruleKey,omitempty"`
-		RuleName string `json:"ruleName,omitempty"`
-	} `json:"events,omitempty"`
-	Exporters []struct {
-		Key       string   `json:"key,omitempty"`
-		Languages []string `json:"languages,omitempty"`
-		Name      string   `json:"name,omitempty"`
-	} `json:"exporters,omitempty"`
-	Importers []struct {
-		Key       string   `json:"key,omitempty"`
-		Languages []string `json:"languages,omitempty"`
-		Name      string   `json:"name,omitempty"`
-	} `json:"importers,omitempty"`
-	IsDefault   bool   `json:"isDefault,omitempty"`
-	IsInherited bool   `json:"isInherited,omitempty"`
-	Key         string `json:"key,omitempty"`
-	Language    string `json:"language,omitempty"`
-	More        bool   `json:"more,omitempty"`
-	Name        string `json:"name,omitempty"`
-	P           int64  `json:"p,omitempty"`
-	ParentKey   string `json:"parentKey,omitempty"`
-	Profile     struct {
-		ActiveRuleCount     int64  `json:"activeRuleCount,omitempty"`
-		IsBuiltIn           bool   `json:"isBuiltIn,omitempty"`
-		IsDefault           bool   `json:"isDefault,omitempty"`
-		IsInherited         bool   `json:"isInherited,omitempty"`
-		Key                 string `json:"key,omitempty"`
-		Language            string `json:"language,omitempty"`
-		LanguageName        string `json:"languageName,omitempty"`
-		Name                string `json:"name,omitempty"`
-		OverridingRuleCount int64  `json:"overridingRuleCount,omitempty"`
-		Parent              string `json:"parent,omitempty"`
-	} `json:"profile,omitempty"`
-	Profiles []struct {
-		Actions struct {
-			AssociateProjects bool `json:"associateProjects,omitempty"`
-			Copy              bool `json:"copy,omitempty"`
-			Delete            bool `json:"delete,omitempty"`
-			Edit              bool `json:"edit,omitempty"`
-			SetAsDefault      bool `json:"setAsDefault,omitempty"`
-		} `json:"actions,omitempty"`
-		ActiveDeprecatedRuleCount int64  `json:"activeDeprecatedRuleCount,omitempty"`
-		ActiveRuleCount           int64  `json:"activeRuleCount,omitempty"`
-		IsBuiltIn                 bool   `json:"isBuiltIn,omitempty"`
-		IsDefault                 bool   `json:"isDefault,omitempty"`
-		IsInherited               bool   `json:"isInherited,omitempty"`
-		Key                       string `json:"key,omitempty"`
-		Language                  string `json:"language,omitempty"`
-		LanguageName              string `json:"languageName,omitempty"`
-		LastUsed                  string `json:"lastUsed,omitempty"`
-		Name                      string `json:"name,omitempty"`
-		ParentKey                 string `json:"parentKey,omitempty"`
-		ParentName                string `json:"parentName,omitempty"`
-		ProjectCount              int64  `json:"projectCount,omitempty"`
-		RuleUpdatedAt             string `json:"ruleUpdatedAt,omitempty"`
-		UserUpdatedAt             string `json:"userUpdatedAt,omitempty"`
-	} `json:"profiles,omitempty"`
-	Ps      int64 `json:"ps,omitempty"`
-	Results []struct {
-		ID       string `json:"id,omitempty"`
-		Key      string `json:"key,omitempty"`
-		Name     string `json:"name,omitempty"`
-		Selected bool   `json:"selected,omitempty"`
-	} `json:"results,omitempty"`
-	Total    int64    `json:"total,omitempty"`
-	Warnings []string `json:"warnings,omitempty"`
+type QualityProfile struct {
+	Actions                   *Actions `json:"actions,omitempty"`
+	ActiveRuleCount           int64    `json:"activeRuleCount,omitempty"`
+	IsBuiltIn                 bool     `json:"isBuiltIn,omitempty"`
+	IsDefault                 bool     `json:"isDefault,omitempty"`
+	IsInherited               bool     `json:"isInherited,omitempty"`
+	Key                       string   `json:"key,omitempty"`
+	Language                  string   `json:"language,omitempty"`
+	LanguageName              string   `json:"languageName,omitempty"`
+	Name                      string   `json:"name,omitempty"`
+	OverridingRuleCount       int64    `json:"overridingRuleCount,omitempty"`
+	Organization              string   `json:"organization,omitempty"`
+	Parent                    string   `json:"parent,omitempty"`
+	ParentKey                 string   `json:"parentKey,omitempty"`
+	ActiveDeprecatedRuleCount int      `json:"activeDeprecatedRuleCount,omitempty"`
+	RulesUpdatedAt            string   `json:"rulesUpdatedAt,omitempty"`
+	UserUpdatedAt             string   `json:"userUpdatedAt,omitempty"`
+	LastUsed                  string   `json:"lastUsed,omitempty"`
+	ProjectCount              int      `json:"projectCount,omitempty"`
 }
 
-type QualityprofilesActivateRuleOption struct {
+type QualityProfilesChangelogObject struct {
+	Events []*QualityProfilesEvent `json:"events,omitempty"`
+	P      int64                   `json:"p,omitempty"`
+	Ps     int64                   `json:"ps,omitempty"`
+	Total  int64                   `json:"total,omitempty"`
+}
+
+type QualityProfilesEvent struct {
+	Action      string      `json:"action,omitempty"`
+	AuthorLogin string      `json:"authorLogin,omitempty"`
+	AuthorName  string      `json:"authorName,omitempty"`
+	Date        string      `json:"date,omitempty"`
+	Params      interface{} `json:"params,omitempty"`
+	RuleKey     string      `json:"ruleKey,omitempty"`
+	RuleName    string      `json:"ruleName,omitempty"`
+}
+
+type QualityProfilesActiveRulesObject struct {
+	Succeeded int `json:"succeeded"`
+	Failed    int `json:"failed"`
+	Errors    []struct {
+		Msg string `json:"msg"`
+	} `json:"errors"`
+}
+
+type QualityProfilesDeactiveRulesObject QualityProfilesActiveRulesObject
+
+type QualityProfilesCreateObject struct {
+	Profile  *QualityProfile `json:"profile,omitempty"`
+	Warnings []string        `json:"warnings,omitempty"`
+}
+
+type ExportImporter struct {
+	Key       string   `json:"key,omitempty"`
+	Name      string   `json:"name,omitempty"`
+	Languages []string `json:"languages,omitempty"`
+}
+type QualityProfilesExportersObject struct {
+	Exporters []*ExportImporter `json:"exporters,omitempty"`
+}
+
+type QualityProfilesImportersObject struct {
+	Importers []*ExportImporter `json:"importers,omitempty"`
+}
+
+type QualityProfilesInheritanceObject struct {
+	Ancestors []*QualityProfile `json:"ancestors,omitempty"`
+	Children  []*QualityProfile `json:"children,omitempty"`
+	Profile   QualityProfile    `json:"profile,omitempty"`
+}
+
+type QualityProfilesSearchObject struct {
+	Actions  *Actions          `json:"actions,omitempty"`
+	Profiles []*QualityProfile `json:"profiles,omitempty"`
+}
+
+type QualityProfilesActivateRuleOption struct {
 	Key      string `url:"key,omitempty"`      // Description:"Quality Profile key. Can be obtained through <code>api/qualityprofiles/search</code>",ExampleValue:"AU-Tpxb--iU5OvuD2FLy"
 	Params   string `url:"params,omitempty"`   // Description:"Parameters as semi-colon list of <code>key=value</code>. Ignored if parameter reset is true.",ExampleValue:"params=key1=v1;key2=v2"
 	Reset    string `url:"reset,omitempty"`    // Description:"Reset severity and parameters of activated rule. Set the values defined on parent profile or from rule default values.",ExampleValue:""
@@ -108,9 +93,9 @@ type QualityprofilesActivateRuleOption struct {
 	Severity string `url:"severity,omitempty"` // Description:"Severity. Ignored if parameter reset is true.",ExampleValue:""
 }
 
-// Activate_rule Activate a rule on a Quality Profile.<br> Requires one of the following permissions:<ul>  <li>'Administer Quality Profiles'</li>  <li>Edit right on the specified quality profile</li></ul>
-func (s *QualityprofilesService) ActivateRule(opt *QualityprofilesActivateRuleOption) (resp *string, err error) {
-	err := s.ValidateActivateRuleOpt(opt)
+// ActivateRule Activate a rule on a Quality Profile.<br> Requires one of the following permissions:<ul>  <li>'Administer Quality Profiles'</li>  <li>Edit right on the specified quality profile</li></ul>
+func (s *QualityProfilesService) ActivateRule(opt *QualityProfilesActivateRuleOption) (resp *http.Response, err error) {
+	err = s.ValidateActivateRuleOpt(opt)
 	if err != nil {
 		return
 	}
@@ -118,14 +103,14 @@ func (s *QualityprofilesService) ActivateRule(opt *QualityprofilesActivateRuleOp
 	if err != nil {
 		return
 	}
-	err = s.client.Do(req, resp)
+	resp, err = s.client.Do(req, nil)
 	if err != nil {
 		return
 	}
 	return
 }
 
-type QualityprofilesActivateRulesOption struct {
+type QualityProfilesActivateRulesOption struct {
 	Activation       string `url:"activation,omitempty"`        // Description:"Filter rules that are activated or deactivated on the selected Quality profile. Ignored if the parameter 'qprofile' is not set.",ExampleValue:""
 	ActiveSeverities string `url:"active_severities,omitempty"` // Description:"Comma-separated list of activation severities, i.e the severity of rules in Quality profiles.",ExampleValue:"CRITICAL,BLOCKER"
 	Asc              string `url:"asc,omitempty"`               // Description:"Ascending sort",ExampleValue:""
@@ -147,9 +132,9 @@ type QualityprofilesActivateRulesOption struct {
 	Types            string `url:"types,omitempty"`             // Description:"Comma-separated list of types. Returned rules match any of the tags (OR operator)",ExampleValue:"BUG"
 }
 
-// Activate_rules Bulk-activate rules on one quality profile.<br> Requires one of the following permissions:<ul>  <li>'Administer Quality Profiles'</li>  <li>Edit right on the specified quality profile</li></ul>
-func (s *QualityprofilesService) ActivateRules(opt *QualityprofilesActivateRulesOption) (resp *string, err error) {
-	err := s.ValidateActivateRulesOpt(opt)
+// ActivateRules Bulk-activate rules on one quality profile.<br> Requires one of the following permissions:<ul>  <li>'Administer Quality Profiles'</li>  <li>Edit right on the specified quality profile</li></ul>
+func (s *QualityProfilesService) ActivateRules(opt *QualityProfilesActivateRulesOption) (v *QualityProfilesActiveRulesObject, resp *http.Response, err error) {
+	err = s.ValidateActivateRulesOpt(opt)
 	if err != nil {
 		return
 	}
@@ -157,24 +142,26 @@ func (s *QualityprofilesService) ActivateRules(opt *QualityprofilesActivateRules
 	if err != nil {
 		return
 	}
-	err = s.client.Do(req, resp)
+	v = new(QualityProfilesActiveRulesObject)
+	resp, err = s.client.Do(req, v)
 	if err != nil {
 		return
 	}
 	return
 }
 
-type QualityprofilesAddProjectOption struct {
+type QualityProfilesAddProjectOption struct {
 	Key            string `url:"key,omitempty"`            // Description:"Quality profile key",ExampleValue:"AU-Tpxb--iU5OvuD2FLy"
 	Language       string `url:"language,omitempty"`       // Description:"Quality profile language",ExampleValue:""
 	Project        string `url:"project,omitempty"`        // Description:"Project key",ExampleValue:"my_project"
 	ProjectUuid    string `url:"projectUuid,omitempty"`    // Description:"Project ID. Either this parameter or 'project' must be set.",ExampleValue:"AU-TpxcA-iU5OvuD2FL5"
 	QualityProfile string `url:"qualityProfile,omitempty"` // Description:"Quality profile name",ExampleValue:"Sonar way"
+	Organization   string `json:"organization,omitempty"`
 }
 
-// Add_project Associate a project with a quality profile.<br> Requires one of the following permissions:<ul>  <li>'Administer Quality Profiles'</li>  <li>Edit right on the specified quality profile</li>  <li>Administer right on the specified project</li></ul>
-func (s *QualityprofilesService) AddProject(opt *QualityprofilesAddProjectOption) (resp *string, err error) {
-	err := s.ValidateAddProjectOpt(opt)
+// AddProject Associate a project with a quality profile.<br> Requires one of the following permissions:<ul>  <li>'Administer Quality Profiles'</li>  <li>Edit right on the specified quality profile</li>  <li>Administer right on the specified project</li></ul>
+func (s *QualityProfilesService) AddProject(opt *QualityProfilesAddProjectOption) (resp *http.Response, err error) {
+	err = s.ValidateAddProjectOpt(opt)
 	if err != nil {
 		return
 	}
@@ -182,22 +169,20 @@ func (s *QualityprofilesService) AddProject(opt *QualityprofilesAddProjectOption
 	if err != nil {
 		return
 	}
-	err = s.client.Do(req, resp)
+	resp, err = s.client.Do(req, nil)
 	if err != nil {
 		return
 	}
 	return
 }
 
-type QualityprofilesBackupOption struct {
-	Key            string `url:"key,omitempty"`            // Description:"Quality profile key",ExampleValue:"AU-Tpxb--iU5OvuD2FLy"
-	Language       string `url:"language,omitempty"`       // Description:"Quality profile language",ExampleValue:""
-	QualityProfile string `url:"qualityProfile,omitempty"` // Description:"Quality profile name",ExampleValue:"Sonar way"
+type QualityProfilesBackupOption struct {
+	ProfileKey string `url:"profileKey,omitempty"` // Description:"Quality profile key",ExampleValue:"AU-Tpxb--iU5OvuD2FLy"
 }
 
 // Backup Backup a quality profile in XML form. The exported profile can be restored through api/qualityprofiles/restore.
-func (s *QualityprofilesService) Backup(opt *QualityprofilesBackupOption) (resp *Qualityprofiles, err error) {
-	err := s.ValidateBackupOpt(opt)
+func (s *QualityProfilesService) Backup(opt *QualityProfilesBackupOption) (v *string, resp *http.Response, err error) {
+	err = s.ValidateBackupOpt(opt)
 	if err != nil {
 		return
 	}
@@ -205,14 +190,18 @@ func (s *QualityprofilesService) Backup(opt *QualityprofilesBackupOption) (resp 
 	if err != nil {
 		return
 	}
-	err = s.client.Do(req, resp)
+	v = new(string)
+	resp, err = s.client.Do(req, v)
 	if err != nil {
-		return
+		return nil, resp, err
 	}
+	// b := new(bytes.Buffer)
+	// b.ReadFrom(resp.Body)
+	// *v = b.String()
 	return
 }
 
-type QualityprofilesChangeParentOption struct {
+type QualityProfilesChangeParentOption struct {
 	Key                  string `url:"key,omitempty"`                  // Description:"Quality profile key",ExampleValue:"AU-Tpxb--iU5OvuD2FLy"
 	Language             string `url:"language,omitempty"`             // Description:"Quality profile language",ExampleValue:""
 	ParentKey            string `url:"parentKey,omitempty"`            // Description:"New parent profile key.<br> If no profile is provided, the inheritance link with current parent profile (if any) is broken, which deactivates all rules which come from the parent and are not overridden.",ExampleValue:"AU-TpxcA-iU5OvuD2FLz"
@@ -220,9 +209,9 @@ type QualityprofilesChangeParentOption struct {
 	QualityProfile       string `url:"qualityProfile,omitempty"`       // Description:"Quality profile name",ExampleValue:"Sonar way"
 }
 
-// Change_parent Change a quality profile's parent.<br>Requires one of the following permissions:<ul>  <li>'Administer Quality Profiles'</li>  <li>Edit right on the specified quality profile</li></ul>
-func (s *QualityprofilesService) ChangeParent(opt *QualityprofilesChangeParentOption) (resp *string, err error) {
-	err := s.ValidateChangeParentOpt(opt)
+// ChangeParent Change a quality profile's parent.<br>Requires one of the following permissions:<ul>  <li>'Administer Quality Profiles'</li>  <li>Edit right on the specified quality profile</li></ul>
+func (s *QualityProfilesService) ChangeParent(opt *QualityProfilesChangeParentOption) (resp *http.Response, err error) {
+	err = s.ValidateChangeParentOpt(opt)
 	if err != nil {
 		return
 	}
@@ -230,14 +219,14 @@ func (s *QualityprofilesService) ChangeParent(opt *QualityprofilesChangeParentOp
 	if err != nil {
 		return
 	}
-	err = s.client.Do(req, resp)
+	resp, err = s.client.Do(req, nil)
 	if err != nil {
 		return
 	}
 	return
 }
 
-type QualityprofilesChangelogOption struct {
+type QualityProfilesChangelogOption struct {
 	Key            string `url:"key,omitempty"`            // Description:"Quality profile key",ExampleValue:"AU-Tpxb--iU5OvuD2FLy"
 	Language       string `url:"language,omitempty"`       // Description:"Quality profile language",ExampleValue:""
 	P              string `url:"p,omitempty"`              // Description:"1-based page number",ExampleValue:"42"
@@ -248,8 +237,8 @@ type QualityprofilesChangelogOption struct {
 }
 
 // Changelog Get the history of changes on a quality profile: rule activation/deactivation, change in parameters/severity. Events are ordered by date in descending order (most recent first).
-func (s *QualityprofilesService) Changelog(opt *QualityprofilesChangelogOption) (resp *Qualityprofiles, err error) {
-	err := s.ValidateChangelogOpt(opt)
+func (s *QualityProfilesService) Changelog(opt *QualityProfilesChangelogOption) (v *QualityProfilesChangelogObject, resp *http.Response, err error) {
+	err = s.ValidateChangelogOpt(opt)
 	if err != nil {
 		return
 	}
@@ -257,21 +246,22 @@ func (s *QualityprofilesService) Changelog(opt *QualityprofilesChangelogOption) 
 	if err != nil {
 		return
 	}
-	err = s.client.Do(req, resp)
+	v = new(QualityProfilesChangelogObject)
+	resp, err = s.client.Do(req, v)
 	if err != nil {
-		return
+		return nil, resp, err
 	}
 	return
 }
 
-type QualityprofilesCopyOption struct {
+type QualityProfilesCopyOption struct {
 	FromKey string `url:"fromKey,omitempty"` // Description:"Quality profile key",ExampleValue:"AU-Tpxb--iU5OvuD2FLy"
 	ToName  string `url:"toName,omitempty"`  // Description:"Name for the new quality profile.",ExampleValue:"My Sonar way"
 }
 
 // Copy Copy a quality profile.<br> Requires to be logged in and the 'Administer Quality Profiles' permission.
-func (s *QualityprofilesService) Copy(opt *QualityprofilesCopyOption) (resp *Qualityprofiles, err error) {
-	err := s.ValidateCopyOpt(opt)
+func (s *QualityProfilesService) Copy(opt *QualityProfilesCopyOption) (v *QualityProfile, resp *http.Response, err error) {
+	err = s.ValidateCopyOpt(opt)
 	if err != nil {
 		return
 	}
@@ -279,22 +269,24 @@ func (s *QualityprofilesService) Copy(opt *QualityprofilesCopyOption) (resp *Qua
 	if err != nil {
 		return
 	}
-	err = s.client.Do(req, resp)
+	v = new(QualityProfile)
+	resp, err = s.client.Do(req, v)
 	if err != nil {
-		return
+		return nil, resp, err
 	}
 	return
 }
 
-type QualityprofilesCreateOption struct {
+type QualityProfilesCreateOption struct {
 	BackupSonarlintVsCsFake string `url:"backup_sonarlint-vs-cs-fake,omitempty"` // Description:"A configuration file for Technical importer for the MSBuild SonarQube Scanner.",ExampleValue:""
 	Language                string `url:"language,omitempty"`                    // Description:"Quality profile language",ExampleValue:"js"
 	Name                    string `url:"name,omitempty"`                        // Description:"Quality profile name",ExampleValue:"My Sonar way"
+	Organization            string `url:"organization,omitempty"`
 }
 
 // Create Create a quality profile.<br>Requires to be logged in and the 'Administer Quality Profiles' permission.
-func (s *QualityprofilesService) Create(opt *QualityprofilesCreateOption) (resp *Qualityprofiles, err error) {
-	err := s.ValidateCreateOpt(opt)
+func (s *QualityProfilesService) Create(opt *QualityProfilesCreateOption) (v *QualityProfilesCreateObject, resp *http.Response, err error) {
+	err = s.ValidateCreateOpt(opt)
 	if err != nil {
 		return
 	}
@@ -302,21 +294,22 @@ func (s *QualityprofilesService) Create(opt *QualityprofilesCreateOption) (resp 
 	if err != nil {
 		return
 	}
-	err = s.client.Do(req, resp)
+	v = new(QualityProfilesCreateObject)
+	resp, err = s.client.Do(req, v)
 	if err != nil {
-		return
+		return nil, resp, err
 	}
 	return
 }
 
-type QualityprofilesDeactivateRuleOption struct {
+type QualityProfilesDeactivateRuleOption struct {
 	Key  string `url:"key,omitempty"`  // Description:"Quality Profile key. Can be obtained through <code>api/qualityprofiles/search</code>",ExampleValue:"AU-Tpxb--iU5OvuD2FLy"
 	Rule string `url:"rule,omitempty"` // Description:"Rule key",ExampleValue:"squid:AvoidCycles"
 }
 
-// Deactivate_rule Deactivate a rule on a quality profile.<br> Requires one of the following permissions:<ul>  <li>'Administer Quality Profiles'</li>  <li>Edit right on the specified quality profile</li></ul>
-func (s *QualityprofilesService) DeactivateRule(opt *QualityprofilesDeactivateRuleOption) (resp *string, err error) {
-	err := s.ValidateDeactivateRuleOpt(opt)
+// DeactivateRule Deactivate a rule on a quality profile.<br> Requires one of the following permissions:<ul>  <li>'Administer Quality Profiles'</li>  <li>Edit right on the specified quality profile</li></ul>
+func (s *QualityProfilesService) DeactivateRule(opt *QualityProfilesDeactivateRuleOption) (resp *http.Response, err error) {
+	err = s.ValidateDeactivateRuleOpt(opt)
 	if err != nil {
 		return
 	}
@@ -324,14 +317,14 @@ func (s *QualityprofilesService) DeactivateRule(opt *QualityprofilesDeactivateRu
 	if err != nil {
 		return
 	}
-	err = s.client.Do(req, resp)
+	resp, err = s.client.Do(req, nil)
 	if err != nil {
 		return
 	}
 	return
 }
 
-type QualityprofilesDeactivateRulesOption struct {
+type QualityProfilesDeactivateRulesOption struct {
 	Activation       string `url:"activation,omitempty"`        // Description:"Filter rules that are activated or deactivated on the selected Quality profile. Ignored if the parameter 'qprofile' is not set.",ExampleValue:""
 	ActiveSeverities string `url:"active_severities,omitempty"` // Description:"Comma-separated list of activation severities, i.e the severity of rules in Quality profiles.",ExampleValue:"CRITICAL,BLOCKER"
 	Asc              string `url:"asc,omitempty"`               // Description:"Ascending sort",ExampleValue:""
@@ -352,9 +345,9 @@ type QualityprofilesDeactivateRulesOption struct {
 	Types            string `url:"types,omitempty"`             // Description:"Comma-separated list of types. Returned rules match any of the tags (OR operator)",ExampleValue:"BUG"
 }
 
-// Deactivate_rules Bulk deactivate rules on Quality profiles.<br>Requires one of the following permissions:<ul>  <li>'Administer Quality Profiles'</li>  <li>Edit right on the specified quality profile</li></ul>
-func (s *QualityprofilesService) DeactivateRules(opt *QualityprofilesDeactivateRulesOption) (resp *string, err error) {
-	err := s.ValidateDeactivateRulesOpt(opt)
+// DeactivateRules Bulk deactivate rules on Quality profiles.<br>Requires one of the following permissions:<ul>  <li>'Administer Quality Profiles'</li>  <li>Edit right on the specified quality profile</li></ul>
+func (s *QualityProfilesService) DeactivateRules(opt *QualityProfilesDeactivateRulesOption) (v *QualityProfilesDeactiveRulesObject, resp *http.Response, err error) {
+	err = s.ValidateDeactivateRulesOpt(opt)
 	if err != nil {
 		return
 	}
@@ -362,22 +355,23 @@ func (s *QualityprofilesService) DeactivateRules(opt *QualityprofilesDeactivateR
 	if err != nil {
 		return
 	}
-	err = s.client.Do(req, resp)
+	v = new(QualityProfilesDeactiveRulesObject)
+	resp, err = s.client.Do(req, v)
 	if err != nil {
 		return
 	}
 	return
 }
 
-type QualityprofilesDeleteOption struct {
+type QualityProfilesDeleteOption struct {
 	Key            string `url:"key,omitempty"`            // Description:"Quality profile key",ExampleValue:"AU-Tpxb--iU5OvuD2FLy"
 	Language       string `url:"language,omitempty"`       // Description:"Quality profile language",ExampleValue:""
 	QualityProfile string `url:"qualityProfile,omitempty"` // Description:"Quality profile name",ExampleValue:"Sonar way"
 }
 
 // Delete Delete a quality profile and all its descendants. The default quality profile cannot be deleted.<br> Requires one of the following permissions:<ul>  <li>'Administer Quality Profiles'</li>  <li>Edit right on the specified quality profile</li></ul>
-func (s *QualityprofilesService) Delete(opt *QualityprofilesDeleteOption) (resp *string, err error) {
-	err := s.ValidateDeleteOpt(opt)
+func (s *QualityProfilesService) Delete(opt *QualityProfilesDeleteOption) (resp *http.Response, err error) {
+	err = s.ValidateDeleteOpt(opt)
 	if err != nil {
 		return
 	}
@@ -385,14 +379,14 @@ func (s *QualityprofilesService) Delete(opt *QualityprofilesDeleteOption) (resp 
 	if err != nil {
 		return
 	}
-	err = s.client.Do(req, resp)
+	resp, err = s.client.Do(req, nil)
 	if err != nil {
 		return
 	}
 	return
 }
 
-type QualityprofilesExportOption struct {
+type QualityProfilesExportOption struct {
 	ExporterKey    string `url:"exporterKey,omitempty"`    // Description:"Output format. If left empty, the same format as api/qualityprofiles/backup is used. Possible values are described by api/qualityprofiles/exporters.",ExampleValue:""
 	Key            string `url:"key,omitempty"`            // Description:"Quality profile key",ExampleValue:"AU-Tpxb--iU5OvuD2FLy"
 	Language       string `url:"language,omitempty"`       // Description:"Quality profile language",ExampleValue:"py"
@@ -400,8 +394,8 @@ type QualityprofilesExportOption struct {
 }
 
 // Export Export a quality profile.
-func (s *QualityprofilesService) Export(opt *QualityprofilesExportOption) (resp *Qualityprofiles, err error) {
-	err := s.ValidateExportOpt(opt)
+func (s *QualityProfilesService) Export(opt *QualityProfilesExportOption) (v *string, resp *http.Response, err error) {
+	err = s.ValidateExportOpt(opt)
 	if err != nil {
 		return
 	}
@@ -409,48 +403,51 @@ func (s *QualityprofilesService) Export(opt *QualityprofilesExportOption) (resp 
 	if err != nil {
 		return
 	}
-	err = s.client.Do(req, resp)
+	v = new(string)
+	resp, err = s.client.Do(req, v)
 	if err != nil {
-		return
+		return nil, resp, err
 	}
 	return
 }
 
 // Exporters Lists available profile export formats.
-func (s *QualityprofilesService) Exporters() (resp *Qualityprofiles, err error) {
-	req, err := s.client.NewRequest("GET", "qualityprofiles/exporters", opt)
+func (s *QualityProfilesService) Exporters() (v *QualityProfilesExportersObject, resp *http.Response, err error) {
+	req, err := s.client.NewRequest("GET", "qualityprofiles/exporters", nil)
 	if err != nil {
 		return
 	}
-	err = s.client.Do(req, resp)
+	v = new(QualityProfilesExportersObject)
+	resp, err = s.client.Do(req, v)
 	if err != nil {
-		return
+		return nil, resp, err
 	}
 	return
 }
 
 // Importers List supported importers.
-func (s *QualityprofilesService) Importers() (resp *Qualityprofiles, err error) {
-	req, err := s.client.NewRequest("GET", "qualityprofiles/importers", opt)
+func (s *QualityProfilesService) Importers() (v *QualityProfilesImportersObject, resp *http.Response, err error) {
+	req, err := s.client.NewRequest("GET", "qualityprofiles/importers", nil)
 	if err != nil {
 		return
 	}
-	err = s.client.Do(req, resp)
+	v = new(QualityProfilesImportersObject)
+	resp, err = s.client.Do(req, v)
 	if err != nil {
-		return
+		return nil, resp, err
 	}
 	return
 }
 
-type QualityprofilesInheritanceOption struct {
+type QualityProfilesInheritanceOption struct {
 	Key            string `url:"key,omitempty"`            // Description:"Quality profile key",ExampleValue:"AU-Tpxb--iU5OvuD2FLy"
 	Language       string `url:"language,omitempty"`       // Description:"Quality profile language",ExampleValue:""
 	QualityProfile string `url:"qualityProfile,omitempty"` // Description:"Quality profile name",ExampleValue:"Sonar way"
 }
 
 // Inheritance Show a quality profile's ancestors and children.
-func (s *QualityprofilesService) Inheritance(opt *QualityprofilesInheritanceOption) (resp *Qualityprofiles, err error) {
-	err := s.ValidateInheritanceOpt(opt)
+func (s *QualityProfilesService) Inheritance(opt *QualityProfilesInheritanceOption) (v *QualityProfilesInheritanceObject, resp *http.Response, err error) {
+	err = s.ValidateInheritanceOpt(opt)
 	if err != nil {
 		return
 	}
@@ -458,24 +455,25 @@ func (s *QualityprofilesService) Inheritance(opt *QualityprofilesInheritanceOpti
 	if err != nil {
 		return
 	}
-	err = s.client.Do(req, resp)
+	v = new(QualityProfilesInheritanceObject)
+	resp, err = s.client.Do(req, v)
 	if err != nil {
-		return
+		return nil, resp, err
 	}
 	return
 }
 
-type QualityprofilesProjectsOption struct {
+type QualityProfilesProjectsOption struct {
 	Key      string `url:"key,omitempty"`      // Description:"Quality profile key",ExampleValue:"AU-Tpxb--iU5OvuD2FLy"
-	P        string `url:"p,omitempty"`        // Description:"1-based page number",ExampleValue:"42"
-	Ps       string `url:"ps,omitempty"`       // Description:"Page size. Must be greater than 0 and less or equal than 500",ExampleValue:"20"
+	P        int    `url:"p,omitempty"`        // Description:"1-based page number",ExampleValue:"42"
+	Ps       int    `url:"ps,omitempty"`       // Description:"Page size. Must be greater than 0 and less or equal than 500",ExampleValue:"20"
 	Q        string `url:"q,omitempty"`        // Description:"Limit search to projects that contain the supplied string.",ExampleValue:"sonar"
 	Selected string `url:"selected,omitempty"` // Description:"Depending on the value, show only selected items (selected=selected), deselected items (selected=deselected), or all items with their selection status (selected=all).",ExampleValue:""
 }
 
 // Projects List projects with their association status regarding a quality profile
-func (s *QualityprofilesService) Projects(opt *QualityprofilesProjectsOption) (resp *Qualityprofiles, err error) {
-	err := s.ValidateProjectsOpt(opt)
+func (s *QualityProfilesService) Projects(opt *QualityProfilesProjectsOption) (v *QualitygatesSearchObject, resp *http.Response, err error) {
+	err = s.ValidateProjectsOpt(opt)
 	if err != nil {
 		return
 	}
@@ -483,24 +481,19 @@ func (s *QualityprofilesService) Projects(opt *QualityprofilesProjectsOption) (r
 	if err != nil {
 		return
 	}
-	err = s.client.Do(req, resp)
+	v = new(QualitygatesSearchObject)
+	resp, err = s.client.Do(req, v)
 	if err != nil {
-		return
+		return nil, resp, err
 	}
 	return
 }
 
-type QualityprofilesRemoveProjectOption struct {
-	Key            string `url:"key,omitempty"`            // Description:"Quality profile key",ExampleValue:"AU-Tpxb--iU5OvuD2FLy"
-	Language       string `url:"language,omitempty"`       // Description:"Quality profile language",ExampleValue:""
-	Project        string `url:"project,omitempty"`        // Description:"Project key",ExampleValue:"my_project"
-	ProjectUuid    string `url:"projectUuid,omitempty"`    // Description:"Project ID. Either this parameter, or 'project' must be set.",ExampleValue:"AU-TpxcB-iU5OvuD2FL6"
-	QualityProfile string `url:"qualityProfile,omitempty"` // Description:"Quality profile name",ExampleValue:"Sonar way"
-}
+type QualityProfilesRemoveProjectOption QualityProfilesAddProjectOption
 
-// Remove_project Remove a project's association with a quality profile.<br> Requires one of the following permissions:<ul>  <li>'Administer Quality Profiles'</li>  <li>Edit right on the specified quality profile</li>  <li>Administer right on the specified project</li></ul>
-func (s *QualityprofilesService) RemoveProject(opt *QualityprofilesRemoveProjectOption) (resp *string, err error) {
-	err := s.ValidateRemoveProjectOpt(opt)
+// RemoveProject Remove a project's association with a quality profile.<br> Requires one of the following permissions:<ul>  <li>'Administer Quality Profiles'</li>  <li>Edit right on the specified quality profile</li>  <li>Administer right on the specified project</li></ul>
+func (s *QualityProfilesService) RemoveProject(opt *QualityProfilesRemoveProjectOption) (resp *http.Response, err error) {
+	err = s.ValidateRemoveProjectOpt(opt)
 	if err != nil {
 		return
 	}
@@ -508,21 +501,21 @@ func (s *QualityprofilesService) RemoveProject(opt *QualityprofilesRemoveProject
 	if err != nil {
 		return
 	}
-	err = s.client.Do(req, resp)
+	resp, err = s.client.Do(req, nil)
 	if err != nil {
 		return
 	}
 	return
 }
 
-type QualityprofilesRenameOption struct {
+type QualityProfilesRenameOption struct {
 	Key  string `url:"key,omitempty"`  // Description:"Quality profile key",ExampleValue:"AU-Tpxb--iU5OvuD2FLy"
 	Name string `url:"name,omitempty"` // Description:"New quality profile name",ExampleValue:"My Sonar way"
 }
 
 // Rename Rename a quality profile.<br> Requires one of the following permissions:<ul>  <li>'Administer Quality Profiles'</li>  <li>Edit right on the specified quality profile</li></ul>
-func (s *QualityprofilesService) Rename(opt *QualityprofilesRenameOption) (resp *string, err error) {
-	err := s.ValidateRenameOpt(opt)
+func (s *QualityProfilesService) Rename(opt *QualityProfilesRenameOption) (resp *http.Response, err error) {
+	err = s.ValidateRenameOpt(opt)
 	if err != nil {
 		return
 	}
@@ -530,20 +523,20 @@ func (s *QualityprofilesService) Rename(opt *QualityprofilesRenameOption) (resp 
 	if err != nil {
 		return
 	}
-	err = s.client.Do(req, resp)
+	resp, err = s.client.Do(req, nil)
 	if err != nil {
 		return
 	}
 	return
 }
 
-type QualityprofilesRestoreOption struct {
+type QualityProfilesRestoreOption struct {
 	Backup string `url:"backup,omitempty"` // Description:"A profile backup file in XML format, as generated by api/qualityprofiles/backup or the former api/profiles/backup.",ExampleValue:""
 }
 
 // Restore Restore a quality profile using an XML file. The restored profile name is taken from the backup file, so if a profile with the same name and language already exists, it will be overwritten.<br> Requires to be logged in and the 'Administer Quality Profiles' permission.
-func (s *QualityprofilesService) Restore(opt *QualityprofilesRestoreOption) (resp *string, err error) {
-	err := s.ValidateRestoreOpt(opt)
+func (s *QualityProfilesService) Restore(opt *QualityProfilesRestoreOption) (resp *http.Response, err error) {
+	err = s.ValidateRestoreOpt(opt)
 	if err != nil {
 		return
 	}
@@ -551,27 +544,14 @@ func (s *QualityprofilesService) Restore(opt *QualityprofilesRestoreOption) (res
 	if err != nil {
 		return
 	}
-	err = s.client.Do(req, resp)
+	resp, err = s.client.Do(req, nil)
 	if err != nil {
 		return
 	}
 	return
 }
 
-// Restore_built_in This web service has no effect since 6.4. It's no more possible to restore built-in quality profiles because they are automatically updated and read only. Returns HTTP code 410.
-func (s *QualityprofilesService) RestoreBuiltIn() (resp *string, err error) {
-	req, err := s.client.NewRequest("POST", "qualityprofiles/restore_built_in", opt)
-	if err != nil {
-		return
-	}
-	err = s.client.Do(req, resp)
-	if err != nil {
-		return
-	}
-	return
-}
-
-type QualityprofilesSearchOption struct {
+type QualityProfilesSearchOption struct {
 	Defaults       string `url:"defaults,omitempty"`       // Description:"If set to true, return only the quality profiles marked as default for each language",ExampleValue:""
 	Language       string `url:"language,omitempty"`       // Description:"Language key. If provided, only profiles for the given language are returned.",ExampleValue:""
 	Project        string `url:"project,omitempty"`        // Description:"Project key",ExampleValue:"my_project"
@@ -579,8 +559,8 @@ type QualityprofilesSearchOption struct {
 }
 
 // Search Search quality profiles
-func (s *QualityprofilesService) Search(opt *QualityprofilesSearchOption) (resp *Qualityprofiles, err error) {
-	err := s.ValidateSearchOpt(opt)
+func (s *QualityProfilesService) Search(opt *QualityProfilesSearchOption) (v *QualityProfilesSearchObject, resp *http.Response, err error) {
+	err = s.ValidateSearchOpt(opt)
 	if err != nil {
 		return
 	}
@@ -588,22 +568,23 @@ func (s *QualityprofilesService) Search(opt *QualityprofilesSearchOption) (resp 
 	if err != nil {
 		return
 	}
-	err = s.client.Do(req, resp)
+	v = new(QualityProfilesSearchObject)
+	resp, err = s.client.Do(req, v)
 	if err != nil {
-		return
+		return nil, resp, err
 	}
 	return
 }
 
-type QualityprofilesSetDefaultOption struct {
+type QualityProfilesSetDefaultOption struct {
 	Key            string `url:"key,omitempty"`            // Description:"Quality profile key",ExampleValue:"AU-Tpxb--iU5OvuD2FLy"
 	Language       string `url:"language,omitempty"`       // Description:"Quality profile language",ExampleValue:""
 	QualityProfile string `url:"qualityProfile,omitempty"` // Description:"Quality profile name",ExampleValue:"Sonar way"
 }
 
-// Set_default Select the default profile for a given language.<br> Requires to be logged in and the 'Administer Quality Profiles' permission.
-func (s *QualityprofilesService) SetDefault(opt *QualityprofilesSetDefaultOption) (resp *string, err error) {
-	err := s.ValidateSetDefaultOpt(opt)
+// SetDefault Select the default profile for a given language.<br> Requires to be logged in and the 'Administer Quality Profiles' permission.
+func (s *QualityProfilesService) SetDefault(opt *QualityProfilesSetDefaultOption) (resp *http.Response, err error) {
+	err = s.ValidateSetDefaultOpt(opt)
 	if err != nil {
 		return
 	}
@@ -611,7 +592,7 @@ func (s *QualityprofilesService) SetDefault(opt *QualityprofilesSetDefaultOption
 	if err != nil {
 		return
 	}
-	err = s.client.Do(req, resp)
+	resp, err = s.client.Do(req, nil)
 	if err != nil {
 		return
 	}

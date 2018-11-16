@@ -1,7 +1,5 @@
 package sonargo
 
-package sonarqube
-
 import (
 	"bytes"
 	"encoding/json"
@@ -12,6 +10,8 @@ import (
 	"net/url"
 	"sort"
 	"strings"
+
+	"github.com/magicsong/color-glog"
 
 	"github.com/google/go-querystring/query"
 )
@@ -87,38 +87,41 @@ func NewRequest(method, path string, baseURL *url.URL, username, password string
 // error if an API error has occurred. If v implements the io.Writer
 // interface, the raw response body will be written to v, without attempting to
 // first decode it.
-func Do(c *http.Client, req *http.Request, v interface{}) error {
+func Do(c *http.Client, req *http.Request, v interface{}) (*http.Response, error) {
 	isText := false
 	if _, ok := v.(*string); ok {
 		req.Header.Set("Accept", "text/plain")
 		isText = true
 	}
+	glog.V(1).Infof("[%s] %s\n", req.Method, req.URL.String())
 	resp, err := c.Do(req)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	defer resp.Body.Close()
 	err = CheckResponse(resp)
 	if err != nil {
-		return err
+		return resp, err
 	}
 	if v != nil {
+		defer resp.Body.Close()
 		if w, ok := v.(io.Writer); ok {
 			_, err = io.Copy(w, resp.Body)
 		} else {
 			if isText {
 				byts, err := ioutil.ReadAll(resp.Body)
 				if err != nil {
-					return err
+					return resp, err
 				}
 				w := v.(*string)
 				*w = string(byts)
 			} else {
-				err = json.NewDecoder(resp.Body).Decode(v)
+				decoder := json.NewDecoder(resp.Body)
+				decoder.DisallowUnknownFields()
+				err = decoder.Decode(v)
 			}
 		}
 	}
-	return err
+	return resp, err
 }
 
 type ErrorResponse struct {

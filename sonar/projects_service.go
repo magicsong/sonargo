@@ -1,11 +1,39 @@
 // Manage project existence.
-package sonargo // import "github.com/magicsong/generate-go-for-sonarqube/pkg/sonargo"
+package sonargo
+
+import "net/http"
 
 type ProjectsService struct {
 	client *Client
 }
 
-type Projects interface{}
+const (
+	ProjectVisibilityPublic  = "public"
+	ProjectVisibilityPrivate = "private"
+)
+
+type ProjectsBulkUpdateKeyObject struct {
+	Keys []*Key `json:"keys,omitempty"`
+}
+
+type Key struct {
+	Duplicate bool   `json:"duplicate,omitempty"`
+	Key       string `json:"key,omitempty"`
+	NewKey    string `json:"newKey,omitempty"`
+}
+
+type Project struct {
+	CreationDate string `json:"creationDate,omitempty"`
+	Key          string `json:"key,omitempty"`
+	Name         string `json:"name,omitempty"`
+	Qualifier    string `json:"qualifier,omitempty"`
+	UUID         string `json:"uuid,omitempty"`
+	Visibility   string `json:"visibility,omitempty"`
+}
+
+type ProjectsCreateObject struct {
+	Project *Project `json:"project,omitempty"`
+}
 
 type ProjectsBulkDeleteOption struct {
 	AnalyzedBefore    string `url:"analyzedBefore,omitempty"`    // Description:"Filter the projects for which last analysis is older than the given date (exclusive).<br> Either a date (server timezone) or datetime can be provided.",ExampleValue:"2017-10-19 or 2017-10-19T13:00:00+0200"
@@ -16,9 +44,9 @@ type ProjectsBulkDeleteOption struct {
 	Qualifiers        string `url:"qualifiers,omitempty"`        // Description:"Comma-separated list of component qualifiers. Filter the results with the specified qualifiers",ExampleValue:""
 }
 
-// Bulk_delete Delete one or several projects.<br />Requires 'Administer System' permission.
-func (s *ProjectsService) BulkDelete(opt *ProjectsBulkDeleteOption) (resp *string, err error) {
-	err := s.ValidateBulkDeleteOpt(opt)
+// BulkDelete Delete one or several projects.<br />Requires 'Administer System' permission.
+func (s *ProjectsService) BulkDelete(opt *ProjectsBulkDeleteOption) (resp *http.Response, err error) {
+	err = s.ValidateBulkDeleteOpt(opt)
 	if err != nil {
 		return
 	}
@@ -26,7 +54,7 @@ func (s *ProjectsService) BulkDelete(opt *ProjectsBulkDeleteOption) (resp *strin
 	if err != nil {
 		return
 	}
-	err = s.client.Do(req, resp)
+	resp, err = s.client.Do(req, nil)
 	if err != nil {
 		return
 	}
@@ -41,9 +69,9 @@ type ProjectsBulkUpdateKeyOption struct {
 	To        string `url:"to,omitempty"`        // Description:"String replacement in components keys",ExampleValue:"_new"
 }
 
-// Bulk_update_key Bulk update a project or module key and all its sub-components keys. The bulk update allows to replace a part of the current key by another string on the current project and all its sub-modules.<br>It's possible to simulate the bulk update by setting the parameter 'dryRun' at true. No key is updated with a dry run.<br>Ex: to rename a project with key 'my_project' to 'my_new_project' and all its sub-components keys, call the WS with parameters:<ul>  <li>project: my_project</li>  <li>from: my_</li>  <li>to: my_new_</li></ul>Either 'projectId' or 'project' must be provided.<br> Requires one of the following permissions: <ul><li>'Administer System'</li><li>'Administer' rights on the specified project</li></ul>
-func (s *ProjectsService) BulkUpdateKey(opt *ProjectsBulkUpdateKeyOption) (resp *Projects, err error) {
-	err := s.ValidateBulkUpdateKeyOpt(opt)
+// BulkUpdateKey Bulk update a project or module key and all its sub-components keys. The bulk update allows to replace a part of the current key by another string on the current project and all its sub-modules.<br>It's possible to simulate the bulk update by setting the parameter 'dryRun' at true. No key is updated with a dry run.<br>Ex: to rename a project with key 'my_project' to 'my_new_project' and all its sub-components keys, call the WS with parameters:<ul>  <li>project: my_project</li>  <li>from: my_</li>  <li>to: my_new_</li></ul>Either 'projectId' or 'project' must be provided.<br> Requires one of the following permissions: <ul><li>'Administer System'</li><li>'Administer' rights on the specified project</li></ul>
+func (s *ProjectsService) BulkUpdateKey(opt *ProjectsBulkUpdateKeyOption) (v *ProjectsBulkUpdateKeyObject, resp *http.Response, err error) {
+	err = s.ValidateBulkUpdateKeyOpt(opt)
 	if err != nil {
 		return
 	}
@@ -51,9 +79,10 @@ func (s *ProjectsService) BulkUpdateKey(opt *ProjectsBulkUpdateKeyOption) (resp 
 	if err != nil {
 		return
 	}
-	err = s.client.Do(req, resp)
+	v = new(ProjectsBulkUpdateKeyObject)
+	resp, err = s.client.Do(req, v)
 	if err != nil {
-		return
+		return nil, resp, err
 	}
 	return
 }
@@ -66,8 +95,8 @@ type ProjectsCreateOption struct {
 }
 
 // Create Create a project.<br/>Requires 'Create Projects' permission
-func (s *ProjectsService) Create(opt *ProjectsCreateOption) (resp *Projects, err error) {
-	err := s.ValidateCreateOpt(opt)
+func (s *ProjectsService) Create(opt *ProjectsCreateOption) (v *ProjectsCreateObject, resp *http.Response, err error) {
+	err = s.ValidateCreateOpt(opt)
 	if err != nil {
 		return
 	}
@@ -75,9 +104,10 @@ func (s *ProjectsService) Create(opt *ProjectsCreateOption) (resp *Projects, err
 	if err != nil {
 		return
 	}
-	err = s.client.Do(req, resp)
+	v = new(ProjectsCreateObject)
+	resp, err = s.client.Do(req, v)
 	if err != nil {
-		return
+		return nil, resp, err
 	}
 	return
 }
@@ -88,8 +118,8 @@ type ProjectsDeleteOption struct {
 }
 
 // Delete Delete a project.<br> Requires 'Administer System' permission or 'Administer' permission on the project.
-func (s *ProjectsService) Delete(opt *ProjectsDeleteOption) (resp *string, err error) {
-	err := s.ValidateDeleteOpt(opt)
+func (s *ProjectsService) Delete(opt *ProjectsDeleteOption) (resp *http.Response, err error) {
+	err = s.ValidateDeleteOpt(opt)
 	if err != nil {
 		return
 	}
@@ -97,83 +127,7 @@ func (s *ProjectsService) Delete(opt *ProjectsDeleteOption) (resp *string, err e
 	if err != nil {
 		return
 	}
-	err = s.client.Do(req, resp)
-	if err != nil {
-		return
-	}
-	return
-}
-
-type ProjectsGhostsOption struct {
-	F  string `url:"f,omitempty"`  // Description:"Comma-separated list of the fields to be returned in response. All the fields are returned by default.",ExampleValue:""
-	P  string `url:"p,omitempty"`  // Description:"1-based page number",ExampleValue:"42"
-	Ps string `url:"ps,omitempty"` // Description:"Page size. Must be greater than 0 and less or equal than 500",ExampleValue:"20"
-	Q  string `url:"q,omitempty"`  // Description:"Limit search to names or keys that contain the supplied string.",ExampleValue:"sonar"
-}
-
-// Ghosts List ghost projects.<br> With the current architecture, it's no more possible to have invisible ghost projects. Therefore, the web service is deprecated.<br> Requires 'Administer System' permission.
-func (s *ProjectsService) Ghosts(opt *ProjectsGhostsOption) (resp *Projects, err error) {
-	err := s.ValidateGhostsOpt(opt)
-	if err != nil {
-		return
-	}
-	req, err := s.client.NewRequest("GET", "projects/ghosts", opt)
-	if err != nil {
-		return
-	}
-	err = s.client.Do(req, resp)
-	if err != nil {
-		return
-	}
-	return
-}
-
-type ProjectsIndexOption struct {
-	Desc        string `url:"desc,omitempty"`        // Description:"Since 6.3, this parameter has no effect",ExampleValue:""
-	Format      string `url:"format,omitempty"`      // Description:"Only json response format is available",ExampleValue:""
-	Libs        string `url:"libs,omitempty"`        // Description:"Since 6.3, this parameter has no effect",ExampleValue:""
-	Project     string `url:"project,omitempty"`     // Description:"key or ID of the project",ExampleValue:"my_project"
-	Search      string `url:"search,omitempty"`      // Description:"Substring of project name, case insensitive. Ignored if the parameter key is set",ExampleValue:"Sonar"
-	Subprojects string `url:"subprojects,omitempty"` // Description:"Load sub-projects. Ignored if the parameter key is set",ExampleValue:""
-	Versions    string `url:"versions,omitempty"`    // Description:"Since 6.3, this parameter has no effect",ExampleValue:""
-	Views       string `url:"views,omitempty"`       // Description:"Since 6.3, this parameter has no effect",ExampleValue:""
-}
-
-// Index This web service is deprecated, please use api/components/search instead
-func (s *ProjectsService) Index(opt *ProjectsIndexOption) (resp *Projects, err error) {
-	err := s.ValidateIndexOpt(opt)
-	if err != nil {
-		return
-	}
-	req, err := s.client.NewRequest("GET", "projects/index", opt)
-	if err != nil {
-		return
-	}
-	err = s.client.Do(req, resp)
-	if err != nil {
-		return
-	}
-	return
-}
-
-type ProjectsProvisionedOption struct {
-	F  string `url:"f,omitempty"`  // Description:"Comma-separated list of the fields to be returned in response. All the fields are returned by default.",ExampleValue:""
-	P  string `url:"p,omitempty"`  // Description:"1-based page number",ExampleValue:"42"
-	Ps string `url:"ps,omitempty"` // Description:"Page size. Must be greater than 0 and less or equal than 500",ExampleValue:"20"
-	Q  string `url:"q,omitempty"`  // Description:"Limit search to names or keys that contain the supplied string.",ExampleValue:"sonar"
-}
-
-// Provisioned Get the list of provisioned projects.<br> Web service is deprecated. Use api/projects/search instead, with onProvisionedOnly=true.<br> Require 'Create Projects' permission.
-func (s *ProjectsService) Provisioned(opt *ProjectsProvisionedOption) (resp *Projects, err error) {
-	err := s.ValidateProvisionedOpt(opt)
-	if err != nil {
-		return
-	}
-	req, err := s.client.NewRequest("GET", "projects/provisioned", opt)
-	if err != nil {
-		return
-	}
-	err = s.client.Do(req, resp)
+	resp, err = s.client.Do(req, nil)
 	if err != nil {
 		return
 	}
@@ -190,10 +144,11 @@ type ProjectsSearchOption struct {
 	Q                 string `url:"q,omitempty"`                 // Description:"Limit search to: <ul><li>component names that contain the supplied string</li><li>component keys that contain the supplied string</li></ul>",ExampleValue:"sonar"
 	Qualifiers        string `url:"qualifiers,omitempty"`        // Description:"Comma-separated list of component qualifiers. Filter the results with the specified qualifiers",ExampleValue:""
 }
+type ProjectSearchObject ComponentsSearchObject
 
 // Search Search for projects or views to administrate them.<br>Requires 'System Administrator' permission
-func (s *ProjectsService) Search(opt *ProjectsSearchOption) (resp *Projects, err error) {
-	err := s.ValidateSearchOpt(opt)
+func (s *ProjectsService) Search(opt *ProjectsSearchOption) (v *ProjectSearchObject, resp *http.Response, err error) {
+	err = s.ValidateSearchOpt(opt)
 	if err != nil {
 		return
 	}
@@ -201,9 +156,10 @@ func (s *ProjectsService) Search(opt *ProjectsSearchOption) (resp *Projects, err
 	if err != nil {
 		return
 	}
-	err = s.client.Do(req, resp)
+	v = new(ProjectSearchObject)
+	resp, err = s.client.Do(req, v)
 	if err != nil {
-		return
+		return nil, resp, err
 	}
 	return
 }
@@ -214,9 +170,9 @@ type ProjectsUpdateKeyOption struct {
 	To        string `url:"to,omitempty"`        // Description:"New component key",ExampleValue:"my_new_project"
 }
 
-// Update_key Update a project or module key and all its sub-components keys.<br>Either 'from' or 'projectId' must be provided.<br> Requires one of the following permissions: <ul><li>'Administer System'</li><li>'Administer' rights on the specified project</li></ul>
-func (s *ProjectsService) UpdateKey(opt *ProjectsUpdateKeyOption) (resp *string, err error) {
-	err := s.ValidateUpdateKeyOpt(opt)
+// UpdateKey Update a project or module key and all its sub-components keys.<br>Either 'from' or 'projectId' must be provided.<br> Requires one of the following permissions: <ul><li>'Administer System'</li><li>'Administer' rights on the specified project</li></ul>
+func (s *ProjectsService) UpdateKey(opt *ProjectsUpdateKeyOption) (resp *http.Response, err error) {
+	err = s.ValidateUpdateKeyOpt(opt)
 	if err != nil {
 		return
 	}
@@ -224,7 +180,7 @@ func (s *ProjectsService) UpdateKey(opt *ProjectsUpdateKeyOption) (resp *string,
 	if err != nil {
 		return
 	}
-	err = s.client.Do(req, resp)
+	resp, err = s.client.Do(req, nil)
 	if err != nil {
 		return
 	}
@@ -236,9 +192,9 @@ type ProjectsUpdateVisibilityOption struct {
 	Visibility string `url:"visibility,omitempty"` // Description:"New visibility",ExampleValue:""
 }
 
-// Update_visibility Updates visibility of a project.<br>Requires 'Project administer' permission on the specified project
-func (s *ProjectsService) UpdateVisibility(opt *ProjectsUpdateVisibilityOption) (resp *string, err error) {
-	err := s.ValidateUpdateVisibilityOpt(opt)
+// UpdateVisibility Updates visibility of a project.<br>Requires 'Project administer' permission on the specified project
+func (s *ProjectsService) UpdateVisibility(opt *ProjectsUpdateVisibilityOption) (resp *http.Response, err error) {
+	err = s.ValidateUpdateVisibilityOpt(opt)
 	if err != nil {
 		return
 	}
@@ -246,7 +202,7 @@ func (s *ProjectsService) UpdateVisibility(opt *ProjectsUpdateVisibilityOption) 
 	if err != nil {
 		return
 	}
-	err = s.client.Do(req, resp)
+	resp, err = s.client.Do(req, nil)
 	if err != nil {
 		return
 	}

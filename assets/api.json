@@ -2,7 +2,7 @@
     "webServices": [
         {
             "path": "api/authentication",
-            "description": "Handle authentication.",
+            "description": "Handle authentication. NOT_IN_CLI",
             "actions": [
                 {
                     "key": "login",
@@ -707,7 +707,7 @@
         {
             "path": "api/editions",
             "since": "6.7",
-            "description": "Manage SonarSource commercial editions.",
+            "description": "Manage SonarSource commercial editions. NOT_IN_CLI",
             "actions": [
                 {
                     "key": "apply_license",
@@ -8583,7 +8583,7 @@
         {
             "path": "api/webservices",
             "since": "4.2",
-            "description": "Get information on the web api supported on this instance.",
+            "description": "Get information on the web api supported on this instance. NOT_IN_CLI",
             "actions": [
                 {
                     "key": "list",

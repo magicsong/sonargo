@@ -1,85 +1,51 @@
 // Get information on Compute Engine tasks.
-package sonargo // import "github.com/magicsong/generate-go-for-sonarqube/pkg/sonargo"
+package sonargo
+
+import "net/http"
 
 type CeService struct {
 	client *Client
 }
 
-type Ce struct {
-	Current struct {
-		AnalysisID         string `json:"analysisId,omitempty"`
-		ComponentID        string `json:"componentId,omitempty"`
-		ComponentKey       string `json:"componentKey,omitempty"`
-		ComponentName      string `json:"componentName,omitempty"`
-		ComponentQualifier string `json:"componentQualifier,omitempty"`
-		ErrorMessage       string `json:"errorMessage,omitempty"`
-		ErrorType          string `json:"errorType,omitempty"`
-		ExecutionTimeMs    int64  `json:"executionTimeMs,omitempty"`
-		FinishedAt         string `json:"finishedAt,omitempty"`
-		HasErrorStacktrace bool   `json:"hasErrorStacktrace,omitempty"`
-		HasScannerContext  bool   `json:"hasScannerContext,omitempty"`
-		ID                 string `json:"id,omitempty"`
-		Logs               bool   `json:"logs,omitempty"`
-		Organization       string `json:"organization,omitempty"`
-		StartedAt          string `json:"startedAt,omitempty"`
-		Status             string `json:"status,omitempty"`
-		SubmittedAt        string `json:"submittedAt,omitempty"`
-		Type               string `json:"type,omitempty"`
-	} `json:"current,omitempty"`
-	Queue []struct {
-		ComponentID        string `json:"componentId,omitempty"`
-		ComponentKey       string `json:"componentKey,omitempty"`
-		ComponentName      string `json:"componentName,omitempty"`
-		ComponentQualifier string `json:"componentQualifier,omitempty"`
-		ID                 string `json:"id,omitempty"`
-		Logs               bool   `json:"logs,omitempty"`
-		Organization       string `json:"organization,omitempty"`
-		Status             string `json:"status,omitempty"`
-		SubmittedAt        string `json:"submittedAt,omitempty"`
-		Type               string `json:"type,omitempty"`
-	} `json:"queue,omitempty"`
-	Task struct {
-		AnalysisID         string `json:"analysisId,omitempty"`
-		ComponentID        string `json:"componentId,omitempty"`
-		ComponentKey       string `json:"componentKey,omitempty"`
-		ComponentName      string `json:"componentName,omitempty"`
-		ComponentQualifier string `json:"componentQualifier,omitempty"`
-		ErrorMessage       string `json:"errorMessage,omitempty"`
-		ErrorStacktrace    string `json:"errorStacktrace,omitempty"`
-		ExecutedAt         string `json:"executedAt,omitempty"`
-		ExecutionTimeMs    int64  `json:"executionTimeMs,omitempty"`
-		HasErrorStacktrace bool   `json:"hasErrorStacktrace,omitempty"`
-		HasScannerContext  bool   `json:"hasScannerContext,omitempty"`
-		ID                 string `json:"id,omitempty"`
-		Logs               bool   `json:"logs,omitempty"`
-		Organization       string `json:"organization,omitempty"`
-		ScannerContext     string `json:"scannerContext,omitempty"`
-		StartedAt          string `json:"startedAt,omitempty"`
-		Status             string `json:"status,omitempty"`
-		SubmittedAt        string `json:"submittedAt,omitempty"`
-		Type               string `json:"type,omitempty"`
-	} `json:"task,omitempty"`
-	Tasks []struct {
-		AnalysisID         string `json:"analysisId,omitempty"`
-		ComponentID        string `json:"componentId,omitempty"`
-		ComponentKey       string `json:"componentKey,omitempty"`
-		ComponentName      string `json:"componentName,omitempty"`
-		ComponentQualifier string `json:"componentQualifier,omitempty"`
-		ErrorMessage       string `json:"errorMessage,omitempty"`
-		ExecutedAt         string `json:"executedAt,omitempty"`
-		ExecutionTimeMs    int64  `json:"executionTimeMs,omitempty"`
-		HasErrorStacktrace bool   `json:"hasErrorStacktrace,omitempty"`
-		HasScannerContext  bool   `json:"hasScannerContext,omitempty"`
-		ID                 string `json:"id,omitempty"`
-		Logs               bool   `json:"logs,omitempty"`
-		Organization       string `json:"organization,omitempty"`
-		StartedAt          string `json:"startedAt,omitempty"`
-		Status             string `json:"status,omitempty"`
-		SubmittedAt        string `json:"submittedAt,omitempty"`
-		SubmitterLogin     string `json:"submitterLogin,omitempty"`
-		TaskType           string `json:"taskType,omitempty"`
-		Type               string `json:"type,omitempty"`
-	} `json:"tasks,omitempty"`
+type CeActivityObject struct {
+	Tasks []*Task `json:"tasks,omitempty"`
+}
+
+type CeComponentObject struct {
+	Current *Task   `json:"current,omitempty"`
+	Queue   []*Task `json:"queue,omitempty"`
+}
+
+type CeTaskObject struct {
+	Task *Task `json:"task,omitempty"`
+}
+
+type Task struct {
+	AnalysisID         string   `json:"analysisId,omitempty"`
+	ComponentID        string   `json:"componentId,omitempty"`
+	ComponentKey       string   `json:"componentKey,omitempty"`
+	ComponentName      string   `json:"componentName,omitempty"`
+	ComponentQualifier string   `json:"componentQualifier,omitempty"`
+	ErrorMessage       string   `json:"errorMessage,omitempty"`
+	ErrorStacktrace    string   `json:"errorStacktrace,omitempty"`
+	ErrorType          string   `json:"errorType,omitempty"`
+	ExecutedAt         string   `json:"executedAt,omitempty"`
+	ExecutionTimeMs    int64    `json:"executionTimeMs,omitempty"`
+	FinishedAt         string   `json:"finishedAt,omitempty"`
+	HasErrorStacktrace bool     `json:"hasErrorStacktrace,omitempty"`
+	HasScannerContext  bool     `json:"hasScannerContext,omitempty"`
+	ID                 string   `json:"id,omitempty"`
+	Logs               bool     `json:"logs,omitempty"`
+	Organization       string   `json:"organization,omitempty"`
+	ScannerContext     string   `json:"scannerContext,omitempty"`
+	StartedAt          string   `json:"startedAt,omitempty"`
+	Status             string   `json:"status,omitempty"`
+	SubmittedAt        string   `json:"submittedAt,omitempty"`
+	SubmitterLogin     string   `json:"submitterLogin,omitempty"`
+	TaskType           string   `json:"taskType,omitempty"`
+	Type               string   `json:"type,omitempty"`
+	WarningCount       int      `json:"warningCount,omitempty"`
+	Warnings           []string `json:"warnings,omitempty"`
 }
 
 type CeActivityOption struct {
@@ -94,8 +60,8 @@ type CeActivityOption struct {
 }
 
 // Activity Search for tasks.<br> Requires the system administration permission, or project administration permission if componentId is set.
-func (s *CeService) Activity(opt *CeActivityOption) (resp *Ce, err error) {
-	err := s.ValidateActivityOpt(opt)
+func (s *CeService) Activity(opt *CeActivityOption) (v *CeActivityObject, resp *http.Response, err error) {
+	err = s.ValidateActivityOpt(opt)
 	if err != nil {
 		return
 	}
@@ -103,9 +69,10 @@ func (s *CeService) Activity(opt *CeActivityOption) (resp *Ce, err error) {
 	if err != nil {
 		return
 	}
-	err = s.client.Do(req, resp)
+	v = new(CeActivityObject)
+	resp, err = s.client.Do(req, v)
 	if err != nil {
-		return
+		return nil, resp, err
 	}
 	return
 }
@@ -116,8 +83,8 @@ type CeComponentOption struct {
 }
 
 // Component Get the pending tasks, in-progress tasks and the last executed task of a given component (usually a project).<br>Requires the following permission: 'Browse' on the specified component.<br>Either 'componentId' or 'component' must be provided.
-func (s *CeService) Component(opt *CeComponentOption) (resp *Ce, err error) {
-	err := s.ValidateComponentOpt(opt)
+func (s *CeService) Component(opt *CeComponentOption) (v *CeComponentObject, resp *http.Response, err error) {
+	err = s.ValidateComponentOpt(opt)
 	if err != nil {
 		return
 	}
@@ -125,9 +92,10 @@ func (s *CeService) Component(opt *CeComponentOption) (resp *Ce, err error) {
 	if err != nil {
 		return
 	}
-	err = s.client.Do(req, resp)
+	v = new(CeComponentObject)
+	resp, err = s.client.Do(req, v)
 	if err != nil {
-		return
+		return nil, resp, err
 	}
 	return
 }
@@ -138,8 +106,8 @@ type CeTaskOption struct {
 }
 
 // Task Give Compute Engine task details such as type, status, duration and associated component.<br />Requires 'Administer System' or 'Execute Analysis' permission.<br/>Since 6.1, field "logs" is deprecated and its value is always false.
-func (s *CeService) Task(opt *CeTaskOption) (resp *Ce, err error) {
-	err := s.ValidateTaskOpt(opt)
+func (s *CeService) Task(opt *CeTaskOption) (v *CeTaskObject, resp *http.Response, err error) {
+	err = s.ValidateTaskOpt(opt)
 	if err != nil {
 		return
 	}
@@ -147,9 +115,10 @@ func (s *CeService) Task(opt *CeTaskOption) (resp *Ce, err error) {
 	if err != nil {
 		return
 	}
-	err = s.client.Do(req, resp)
+	v = new(CeTaskObject)
+	resp, err = s.client.Do(req, v)
 	if err != nil {
-		return
+		return nil, resp, err
 	}
 	return
 }

@@ -1,83 +1,94 @@
 // Get and update some details of automatic rules, and manage custom rules.
-package sonargo // import "github.com/magicsong/generate-go-for-sonarqube/pkg/sonargo"
+package sonargo
+
+import "net/http"
 
 type RulesService struct {
 	client *Client
 }
 
-type Rules struct {
-	Actives interface{} `json:"actives,omitempty"`
-	Facets  []struct {
-		Name   string `json:"name,omitempty"`
-		Values []struct {
-			Count int64  `json:"count,omitempty"`
-			Val   string `json:"val,omitempty"`
-		} `json:"values,omitempty"`
-	} `json:"facets,omitempty"`
-	P            int64 `json:"p,omitempty"`
-	Ps           int64 `json:"ps,omitempty"`
-	Repositories []struct {
-		Key      string `json:"key,omitempty"`
-		Language string `json:"language,omitempty"`
-		Name     string `json:"name,omitempty"`
-	} `json:"repositories,omitempty"`
-	Rule struct {
-		DefaultRemFnBaseEffort    string `json:"defaultRemFnBaseEffort,omitempty"`
-		DefaultRemFnGapMultiplier string `json:"defaultRemFnGapMultiplier,omitempty"`
-		DefaultRemFnType          string `json:"defaultRemFnType,omitempty"`
-		GapDescription            string `json:"gapDescription,omitempty"`
-		HTMLDesc                  string `json:"htmlDesc,omitempty"`
-		InternalKey               string `json:"internalKey,omitempty"`
-		Key                       string `json:"key,omitempty"`
-		Lang                      string `json:"lang,omitempty"`
-		LangName                  string `json:"langName,omitempty"`
-		Name                      string `json:"name,omitempty"`
-		Params                    []struct {
-			DefaultValue string `json:"defaultValue,omitempty"`
-			Desc         string `json:"desc,omitempty"`
-			Key          string `json:"key,omitempty"`
-		} `json:"params,omitempty"`
-		RemFnBaseEffort    string        `json:"remFnBaseEffort,omitempty"`
-		RemFnGapMultiplier string        `json:"remFnGapMultiplier,omitempty"`
-		RemFnOverloaded    bool          `json:"remFnOverloaded,omitempty"`
-		RemFnType          string        `json:"remFnType,omitempty"`
-		Repo               string        `json:"repo,omitempty"`
-		Scope              string        `json:"scope,omitempty"`
-		Severity           string        `json:"severity,omitempty"`
-		Status             string        `json:"status,omitempty"`
-		SysTags            []string      `json:"sysTags,omitempty"`
-		Tags               []interface{} `json:"tags,omitempty"`
-		Template           bool          `json:"template,omitempty"`
-		Type               string        `json:"type,omitempty"`
-	} `json:"rule,omitempty"`
-	Rules []struct {
-		CreatedAt   string `json:"createdAt,omitempty"`
-		HTMLDesc    string `json:"htmlDesc,omitempty"`
-		HTMLNote    string `json:"htmlNote,omitempty"`
-		InternalKey string `json:"internalKey,omitempty"`
-		IsTemplate  bool   `json:"isTemplate,omitempty"`
-		Key         string `json:"key,omitempty"`
-		Lang        string `json:"lang,omitempty"`
-		LangName    string `json:"langName,omitempty"`
-		MdNote      string `json:"mdNote,omitempty"`
-		Name        string `json:"name,omitempty"`
-		NoteLogin   string `json:"noteLogin,omitempty"`
-		Params      []struct {
-			DefaultValue string `json:"defaultValue,omitempty"`
-			Desc         string `json:"desc,omitempty"`
-			Key          string `json:"key,omitempty"`
-		} `json:"params,omitempty"`
-		Repo        string        `json:"repo,omitempty"`
-		Scope       string        `json:"scope,omitempty"`
-		Severity    string        `json:"severity,omitempty"`
-		Status      string        `json:"status,omitempty"`
-		SysTags     []string      `json:"sysTags,omitempty"`
-		Tags        []interface{} `json:"tags,omitempty"`
-		TemplateKey string        `json:"templateKey,omitempty"`
-		Type        string        `json:"type,omitempty"`
-	} `json:"rules,omitempty"`
-	Tags  []string `json:"tags,omitempty"`
-	Total int64    `json:"total,omitempty"`
+type Rule struct {
+	Key             string       `json:"key,omitempty"`
+	Repo            string       `json:"repo,omitempty"`
+	Name            string       `json:"name,omitempty"`
+	CreatedAt       string       `json:"createdAt,omitempty"`
+	HTMLDesc        string       `json:"htmlDesc,omitempty"`
+	MdDesc          string       `json:"mdDesc,omitempty"`
+	Severity        string       `json:"severity,omitempty"`
+	Status          string       `json:"status,omitempty"`
+	IsTemplate      bool         `json:"isTemplate,omitempty"`
+	TemplateKey     string       `json:"templateKey,omitempty"`
+	Tags            []string     `json:"tags,omitempty"`
+	SysTags         []string     `json:"sysTags,omitempty"`
+	Lang            string       `json:"lang,omitempty"`
+	LangName        string       `json:"langName,omitempty"`
+	DebtOverloaded  bool         `json:"debtOverloaded,omitempty"`
+	RemFnOverloaded bool         `json:"remFnOverloaded,omitempty"`
+	Params          []*RuleParam `json:"params,omitempty"`
+	Scope           string       `json:"scope,omitempty"`
+	IsExternal      bool         `json:"isExternal,omitempty"`
+	Type            string       `json:"type,omitempty"`
+}
+
+type RuleParam struct {
+	DefaultValue string `json:"defaultValue,omitempty"`
+	Key          string `json:"key,omitempty"`
+	HTMLDesc     string `json:"htmlDesc,omitempty"`
+	Type         string `json:"type,omitempty"`
+}
+type RulesRepositoriesObject struct {
+	Repositories []*Repositorie `json:"repositories,omitempty"`
+}
+
+type Repositorie struct {
+	Key      string `json:"key,omitempty"`
+	Language string `json:"language,omitempty"`
+	Name     string `json:"name,omitempty"`
+}
+type RuleCreateObject struct {
+	Rule *Rule `json:"rule,omitempty"`
+}
+type RulesSearchObject struct {
+	Actives *Actives `json:"actives,omitempty"`
+	Facets  []*Facet `json:"facets,omitempty"`
+	P       int64    `json:"p,omitempty"`
+	Ps      int64    `json:"ps,omitempty"`
+	Rules   []*Rule  `json:"rules,omitempty"`
+	Total   int64    `json:"total,omitempty"`
+}
+
+type RuleUpdateObject RuleCreateObject
+type Actives struct {
+	SquidClassCyclomaticComplexity  []*SquidClassCyclomaticComplexity `json:"squid:ClassCyclomaticComplexity,omitempty"`
+	SquidMethodCyclomaticComplexity []*SquidClassCyclomaticComplexity `json:"squid:MethodCyclomaticComplexity,omitempty"`
+	Squid_S1067                     []*SquidClassCyclomaticComplexity `json:"squid:S1067,omitempty"`
+}
+
+type Facet struct {
+	Name   string        `json:"name,omitempty"`
+	Values []*FacetValue `json:"values,omitempty"`
+}
+
+type SquidParam struct {
+	Key   string `json:"key,omitempty"`
+	Value string `json:"value,omitempty"`
+}
+
+type SquidClassCyclomaticComplexity struct {
+	Inherit  string        `json:"inherit,omitempty"`
+	Params   []*SquidParam `json:"params,omitempty"`
+	QProfile string        `json:"qProfile,omitempty"`
+	Severity string        `json:"severity,omitempty"`
+}
+
+type FacetValue struct {
+	Count int64  `json:"count,omitempty"`
+	Val   string `json:"val,omitempty"`
+}
+
+type RulesShowObject struct {
+	Actives []*SquidClassCyclomaticComplexity `json:"actives,omitempty"`
+	Rule    *Rule                             `json:"rule,omitempty"`
 }
 
 type RulesCreateOption struct {
@@ -94,8 +105,8 @@ type RulesCreateOption struct {
 }
 
 // Create Create a custom rule.<br>Requires the 'Administer Quality Profiles' permission
-func (s *RulesService) Create(opt *RulesCreateOption) (resp *string, err error) {
-	err := s.ValidateCreateOpt(opt)
+func (s *RulesService) Create(opt *RulesCreateOption) (v *RuleCreateObject, resp *http.Response, err error) {
+	err = s.ValidateCreateOpt(opt)
 	if err != nil {
 		return
 	}
@@ -103,7 +114,8 @@ func (s *RulesService) Create(opt *RulesCreateOption) (resp *string, err error) 
 	if err != nil {
 		return
 	}
-	err = s.client.Do(req, resp)
+	v = new(RuleCreateObject)
+	resp, err = s.client.Do(req, v)
 	if err != nil {
 		return
 	}
@@ -115,8 +127,8 @@ type RulesDeleteOption struct {
 }
 
 // Delete Delete custom rule.<br/>Requires the 'Administer Quality Profiles' permission
-func (s *RulesService) Delete(opt *RulesDeleteOption) (resp *string, err error) {
-	err := s.ValidateDeleteOpt(opt)
+func (s *RulesService) Delete(opt *RulesDeleteOption) (resp *http.Response, err error) {
+	err = s.ValidateDeleteOpt(opt)
 	if err != nil {
 		return
 	}
@@ -124,7 +136,7 @@ func (s *RulesService) Delete(opt *RulesDeleteOption) (resp *string, err error) 
 	if err != nil {
 		return
 	}
-	err = s.client.Do(req, resp)
+	resp, err = s.client.Do(req, nil)
 	if err != nil {
 		return
 	}
@@ -137,8 +149,8 @@ type RulesRepositoriesOption struct {
 }
 
 // Repositories List available rule repositories
-func (s *RulesService) Repositories(opt *RulesRepositoriesOption) (resp *Rules, err error) {
-	err := s.ValidateRepositoriesOpt(opt)
+func (s *RulesService) Repositories(opt *RulesRepositoriesOption) (v *RulesRepositoriesObject, resp *http.Response, err error) {
+	err = s.ValidateRepositoriesOpt(opt)
 	if err != nil {
 		return
 	}
@@ -146,9 +158,10 @@ func (s *RulesService) Repositories(opt *RulesRepositoriesOption) (resp *Rules, 
 	if err != nil {
 		return
 	}
-	err = s.client.Do(req, resp)
+	v = new(RulesRepositoriesObject)
+	resp, err = s.client.Do(req, v)
 	if err != nil {
-		return
+		return nil, resp, err
 	}
 	return
 }
@@ -177,8 +190,8 @@ type RulesSearchOption struct {
 }
 
 // Search Search for a collection of relevant rules matching a specified query.<br/>Since 5.5, following fields in the response have been deprecated :<ul><li>"effortToFixDescription" becomes "gapDescription"</li><li>"debtRemFnCoeff" becomes "remFnGapMultiplier"</li><li>"defaultDebtRemFnCoeff" becomes "defaultRemFnGapMultiplier"</li><li>"debtRemFnOffset" becomes "remFnBaseEffort"</li><li>"defaultDebtRemFnOffset" becomes "defaultRemFnBaseEffort"</li><li>"debtOverloaded" becomes "remFnOverloaded"</li></ul>
-func (s *RulesService) Search(opt *RulesSearchOption) (resp *Rules, err error) {
-	err := s.ValidateSearchOpt(opt)
+func (s *RulesService) Search(opt *RulesSearchOption) (v *RulesSearchObject, resp *http.Response, err error) {
+	err = s.ValidateSearchOpt(opt)
 	if err != nil {
 		return
 	}
@@ -186,9 +199,10 @@ func (s *RulesService) Search(opt *RulesSearchOption) (resp *Rules, err error) {
 	if err != nil {
 		return
 	}
-	err = s.client.Do(req, resp)
+	v = new(RulesSearchObject)
+	resp, err = s.client.Do(req, v)
 	if err != nil {
-		return
+		return nil, resp, err
 	}
 	return
 }
@@ -199,8 +213,8 @@ type RulesShowOption struct {
 }
 
 // Show Get detailed information about a rule<br>Since 5.5, following fields in the response have been deprecated :<ul><li>"effortToFixDescription" becomes "gapDescription"</li><li>"debtRemFnCoeff" becomes "remFnGapMultiplier"</li><li>"defaultDebtRemFnCoeff" becomes "defaultRemFnGapMultiplier"</li><li>"debtRemFnOffset" becomes "remFnBaseEffort"</li><li>"defaultDebtRemFnOffset" becomes "defaultRemFnBaseEffort"</li><li>"debtOverloaded" becomes "remFnOverloaded"</li></ul>In 7.1, the field 'scope' has been added.
-func (s *RulesService) Show(opt *RulesShowOption) (resp *Rules, err error) {
-	err := s.ValidateShowOpt(opt)
+func (s *RulesService) Show(opt *RulesShowOption) (v *RulesShowObject, resp *http.Response, err error) {
+	err = s.ValidateShowOpt(opt)
 	if err != nil {
 		return
 	}
@@ -208,21 +222,22 @@ func (s *RulesService) Show(opt *RulesShowOption) (resp *Rules, err error) {
 	if err != nil {
 		return
 	}
-	err = s.client.Do(req, resp)
+	v = new(RulesShowObject)
+	resp, err = s.client.Do(req, v)
 	if err != nil {
-		return
+		return nil, resp, err
 	}
 	return
 }
 
 type RulesTagsOption struct {
-	Ps string `url:"ps,omitempty"` // Description:"Page size. Must be greater than 0 and less or equal than 100",ExampleValue:"20"
+	Ps int    `url:"ps,omitempty"` // Description:"Page size. Must be greater than 0 and less or equal than 100",ExampleValue:"20"
 	Q  string `url:"q,omitempty"`  // Description:"Limit search to tags that contain the supplied string.",ExampleValue:"misra"
 }
 
 // Tags List rule tags
-func (s *RulesService) Tags(opt *RulesTagsOption) (resp *Rules, err error) {
-	err := s.ValidateTagsOpt(opt)
+func (s *RulesService) Tags(opt *RulesTagsOption) (v *IssuesTagsObject, resp *http.Response, err error) {
+	err = s.ValidateTagsOpt(opt)
 	if err != nil {
 		return
 	}
@@ -230,9 +245,10 @@ func (s *RulesService) Tags(opt *RulesTagsOption) (resp *Rules, err error) {
 	if err != nil {
 		return
 	}
-	err = s.client.Do(req, resp)
+	v = new(IssuesTagsObject)
+	resp, err = s.client.Do(req, v)
 	if err != nil {
-		return
+		return nil, resp, err
 	}
 	return
 }
@@ -256,8 +272,8 @@ type RulesUpdateOption struct {
 }
 
 // Update Update an existing rule.<br>Requires the 'Administer Quality Profiles' permission
-func (s *RulesService) Update(opt *RulesUpdateOption) (resp *string, err error) {
-	err := s.ValidateUpdateOpt(opt)
+func (s *RulesService) Update(opt *RulesUpdateOption) (v *RuleUpdateObject, resp *http.Response, err error) {
+	err = s.ValidateUpdateOpt(opt)
 	if err != nil {
 		return
 	}
@@ -265,7 +281,8 @@ func (s *RulesService) Update(opt *RulesUpdateOption) (resp *string, err error) 
 	if err != nil {
 		return
 	}
-	err = s.client.Do(req, resp)
+	v = new(RuleUpdateObject)
+	resp, err = s.client.Do(req, v)
 	if err != nil {
 		return
 	}

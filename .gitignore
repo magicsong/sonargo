@@ -12,3 +12,7 @@
 *.out
 
 vendor
+.scannerwork
+debug
+temp.file
+sonar.coverprofile

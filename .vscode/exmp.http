@@ -1,0 +1,15 @@
+POST http://192.168.98.8:9000/api/permissions/create_template?name=test HTTP/1.1
+Authorization: Basic YWRtaW46YWRtaW4=
+
+
+#####
+GET  http://192.168.98.8:9000/api/permissions/search_templates HTTP/1.1
+Authorization: Basic YWRtaW46YWRtaW4=
+
+#####
+GET  http://192.168.98.8:9000/api/plugins/available HTTP/1.1
+Authorization: Basic YWRtaW46YWRtaW4=
+
+#####
+POST http://192.168.98.8:9000/api/users/deactivate?login=magicsong HTTP/1.1
+Authorization: Basic YWRtaW46YWRtaW4=

@@ -1,19 +1,22 @@
 //
-package sonargo // import "github.com/magicsong/generate-go-for-sonarqube/pkg/sonargo"
+package sonargo
+
+import "net/http"
 
 type ServerService struct {
 	client *Client
 }
 
 // Version Version of SonarQube in plain text
-func (s *ServerService) Version() (resp *string, err error) {
-	req, err := s.client.NewRequest("GET", "server/version", opt)
+func (s *ServerService) Version() (v *string, resp *http.Response, err error) {
+	req, err := s.client.NewRequest("GET", "server/version", nil)
 	if err != nil {
 		return
 	}
-	err = s.client.Do(req, resp)
+	v = new(string)
+	resp, err = s.client.Do(req, v)
 	if err != nil {
-		return
+		return nil, resp, err
 	}
 	return
 }

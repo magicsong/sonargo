@@ -1,142 +1,121 @@
 // Read and update issues.
-package sonargo // import "github.com/magicsong/generate-go-for-sonarqube/pkg/sonargo"
+package sonargo
+
+import "net/http"
 
 type IssuesService struct {
 	client *Client
 }
 
-type Issues struct {
-	Authors   []string `json:"authors,omitempty"`
-	Changelog []struct {
-		Avatar       string `json:"avatar,omitempty"`
-		CreationDate string `json:"creationDate,omitempty"`
-		Diffs        []struct {
-			Key      string `json:"key,omitempty"`
-			NewValue string `json:"newValue,omitempty"`
-			OldValue string `json:"oldValue,omitempty"`
-		} `json:"diffs,omitempty"`
-		User     string `json:"user,omitempty"`
-		UserName string `json:"userName,omitempty"`
-	} `json:"changelog,omitempty"`
-	Components []struct {
-		Enabled      bool   `json:"enabled,omitempty"`
-		ID           int64  `json:"id,omitempty"`
-		Key          string `json:"key,omitempty"`
-		LongName     string `json:"longName,omitempty"`
-		Name         string `json:"name,omitempty"`
-		Path         string `json:"path,omitempty"`
-		ProjectID    int64  `json:"projectId,omitempty"`
-		Qualifier    string `json:"qualifier,omitempty"`
-		SubProjectID int64  `json:"subProjectId,omitempty"`
-		UUID         string `json:"uuid,omitempty"`
-	} `json:"components,omitempty"`
-	Failures int64 `json:"failures,omitempty"`
-	Ignored  int64 `json:"ignored,omitempty"`
-	Issue    struct {
-		Actions  []string `json:"actions,omitempty"`
-		Assignee string   `json:"assignee,omitempty"`
-		Author   string   `json:"author,omitempty"`
-		Comments []struct {
-			CreatedAt string `json:"createdAt,omitempty"`
-			HTMLText  string `json:"htmlText,omitempty"`
-			Key       string `json:"key,omitempty"`
-			Login     string `json:"login,omitempty"`
-			Markdown  string `json:"markdown,omitempty"`
-			Updatable bool   `json:"updatable,omitempty"`
-		} `json:"comments,omitempty"`
-		Component    string        `json:"component,omitempty"`
-		CreationDate string        `json:"creationDate,omitempty"`
-		Debt         string        `json:"debt,omitempty"`
-		Effort       string        `json:"effort,omitempty"`
-		Flows        []interface{} `json:"flows,omitempty"`
-		Key          string        `json:"key,omitempty"`
-		Line         int64         `json:"line,omitempty"`
-		Message      string        `json:"message,omitempty"`
-		Project      string        `json:"project,omitempty"`
-		Rule         string        `json:"rule,omitempty"`
-		Severity     string        `json:"severity,omitempty"`
-		Status       string        `json:"status,omitempty"`
-		Tags         []string      `json:"tags,omitempty"`
-		TextRange    struct {
-			EndLine     int64 `json:"endLine,omitempty"`
-			EndOffset   int64 `json:"endOffset,omitempty"`
-			StartLine   int64 `json:"startLine,omitempty"`
-			StartOffset int64 `json:"startOffset,omitempty"`
-		} `json:"textRange,omitempty"`
-		Transitions []string `json:"transitions,omitempty"`
-		Type        string   `json:"type,omitempty"`
-		UpdateDate  string   `json:"updateDate,omitempty"`
-	} `json:"issue,omitempty"`
-	Issues []struct {
-		Actions []string `json:"actions,omitempty"`
-		Attr    struct {
-			Jira_issue_key string `json:"jira-issue-key,omitempty"`
-		} `json:"attr,omitempty"`
-		Author   string `json:"author,omitempty"`
-		Comments []struct {
-			CreatedAt string `json:"createdAt,omitempty"`
-			HTMLText  string `json:"htmlText,omitempty"`
-			Key       string `json:"key,omitempty"`
-			Login     string `json:"login,omitempty"`
-			Markdown  string `json:"markdown,omitempty"`
-			Updatable bool   `json:"updatable,omitempty"`
-		} `json:"comments,omitempty"`
-		Component    string `json:"component,omitempty"`
-		CreationDate string `json:"creationDate,omitempty"`
-		Effort       string `json:"effort,omitempty"`
-		Flows        []struct {
-			Locations []struct {
-				Msg       string `json:"msg,omitempty"`
-				TextRange struct {
-					EndLine     int64 `json:"endLine,omitempty"`
-					EndOffset   int64 `json:"endOffset,omitempty"`
-					StartLine   int64 `json:"startLine,omitempty"`
-					StartOffset int64 `json:"startOffset,omitempty"`
-				} `json:"textRange,omitempty"`
-			} `json:"locations,omitempty"`
-		} `json:"flows,omitempty"`
-		Hash       string   `json:"hash,omitempty"`
-		Key        string   `json:"key,omitempty"`
-		Line       int64    `json:"line,omitempty"`
-		Message    string   `json:"message,omitempty"`
-		Project    string   `json:"project,omitempty"`
-		Resolution string   `json:"resolution,omitempty"`
-		Rule       string   `json:"rule,omitempty"`
-		Severity   string   `json:"severity,omitempty"`
-		Status     string   `json:"status,omitempty"`
-		Tags       []string `json:"tags,omitempty"`
-		TextRange  struct {
-			EndLine     int64 `json:"endLine,omitempty"`
-			EndOffset   int64 `json:"endOffset,omitempty"`
-			StartLine   int64 `json:"startLine,omitempty"`
-			StartOffset int64 `json:"startOffset,omitempty"`
-		} `json:"textRange,omitempty"`
-		Transitions []string `json:"transitions,omitempty"`
-		Type        string   `json:"type,omitempty"`
-		UpdateDate  string   `json:"updateDate,omitempty"`
-	} `json:"issues,omitempty"`
-	Paging struct {
-		PageIndex int64 `json:"pageIndex,omitempty"`
-		PageSize  int64 `json:"pageSize,omitempty"`
-		Total     int64 `json:"total,omitempty"`
-	} `json:"paging,omitempty"`
-	Rules []struct {
-		Key      string `json:"key,omitempty"`
-		Lang     string `json:"lang,omitempty"`
-		LangName string `json:"langName,omitempty"`
-		Name     string `json:"name,omitempty"`
-		Status   string `json:"status,omitempty"`
-	} `json:"rules,omitempty"`
-	Success int64    `json:"success,omitempty"`
-	Tags    []string `json:"tags,omitempty"`
-	Total   int64    `json:"total,omitempty"`
-	Users   []struct {
-		Active bool   `json:"active,omitempty"`
-		Avatar string `json:"avatar,omitempty"`
-		Email  string `json:"email,omitempty"`
-		Login  string `json:"login,omitempty"`
-		Name   string `json:"name,omitempty"`
-	} `json:"users,omitempty"`
+const (
+	SeverityINFO     = "INFO"
+	SeverityMINOR    = "MINOR"
+	SeverityMAJOR    = "MAJOR"
+	SeverityCRITICAL = "CRITICAL"
+	SeverityBLOCKER  = "BLOCKER"
+
+	IssueTypeBug           = "BUG"
+	IssueTypeCodeSmell     = "CODE_SMELL"
+	IssueTypeVulnerability = "VULNERABILITY"
+)
+
+type IssuesAddCommentObject struct {
+	Components []*Component `json:"components,omitempty"`
+	Issue      *Issue       `json:"issue,omitempty"`
+	Rules      []*Rule      `json:"rules,omitempty"`
+	Users      []*User      `json:"users,omitempty"`
+}
+
+type IssuesSearchObject struct {
+	Components  []*Component `json:"components,omitempty"`
+	EffortTotal int          `json:"effortTotal,omitempty"`
+	DebtTotal   int          `json:"debtTotal,omitempty"`
+	Issues      []*Issue     `json:"issues,omitempty"`
+	P           int          `json:"p,omitempty"`
+	Ps          int          `json:"ps,omitempty"`
+	Paging      *Paging      `json:"paging,omitempty"`
+	Rules       []*Rule      `json:"rules,omitempty"`
+	Total       int          `json:"total,omitempty"`
+	Users       []*User      `json:"users,omitempty"`
+	Facets      []string     `json:"facets,omitempty"`
+}
+
+type Comment struct {
+	CreatedAt string `json:"createdAt,omitempty"`
+	HTMLText  string `json:"htmlText,omitempty"`
+	Key       string `json:"key,omitempty"`
+	Login     string `json:"login,omitempty"`
+	Markdown  string `json:"markdown,omitempty"`
+	Updatable bool   `json:"updatable,omitempty"`
+}
+
+type Issue struct {
+	Actions      []string      `json:"actions,omitempty"`
+	Assignee     string        `json:"assignee,omitempty"`
+	Author       string        `json:"author,omitempty"`
+	Comments     []*Comment    `json:"comments,omitempty"`
+	Component    string        `json:"component,omitempty"`
+	CreationDate string        `json:"creationDate,omitempty"`
+	Debt         string        `json:"debt,omitempty"`
+	Effort       string        `json:"effort,omitempty"`
+	Flows        []interface{} `json:"flows,omitempty"`
+	Hash         string        `json:"hash,omitempty"`
+	Key          string        `json:"key,omitempty"`
+	Line         int           `json:"line,omitempty"`
+	Message      string        `json:"message,omitempty"`
+	Organization string        `json:"organization,omitempty"`
+	Project      string        `json:"project,omitempty"`
+	Rule         string        `json:"rule,omitempty"`
+	Severity     string        `json:"severity,omitempty"`
+	Status       string        `json:"status,omitempty"`
+	Tags         []string      `json:"tags,omitempty"`
+	TextRange    *TextRange    `json:"textRange,omitempty"`
+	Transitions  []string      `json:"transitions,omitempty"`
+	Type         string        `json:"type,omitempty"`
+	UpdateDate   string        `json:"updateDate,omitempty"`
+	FromHotspot  bool          `json:"fromHotspot,omitempty"`
+	Resolution   string        `json:"resolution,omitempty"`
+	CloseDate    string        `json:"closeDate,omitempty"`
+}
+
+type TextRange struct {
+	EndLine     int `json:"endLine,omitempty"`
+	EndOffset   int `json:"endOffset,omitempty"`
+	StartLine   int `json:"startLine,omitempty"`
+	StartOffset int `json:"startOffset,omitempty"`
+}
+
+type IssuesAuthorsObject struct {
+	Authors []string `json:"authors,omitempty"`
+}
+
+type IssuesBulkChangeObject struct {
+	Failures int `json:"failures,omitempty"`
+	Ignored  int `json:"ignored,omitempty"`
+	Success  int `json:"success,omitempty"`
+	Total    int `json:"total,omitempty"`
+}
+
+type IssuesChangelogObject struct {
+	Changelog []*Changelog `json:"changelog,omitempty"`
+}
+
+type Changelog struct {
+	Avatar       string  `json:"avatar,omitempty"`
+	CreationDate string  `json:"creationDate,omitempty"`
+	Diffs        []*Diff `json:"diffs,omitempty"`
+	User         string  `json:"user,omitempty"`
+	UserName     string  `json:"userName,omitempty"`
+}
+
+type Diff struct {
+	Key      string `json:"key,omitempty"`
+	NewValue string `json:"newValue,omitempty"`
+	OldValue string `json:"oldValue,omitempty"`
+}
+
+type IssuesTagsObject struct {
+	Tags []string `json:"tags,omitempty"`
 }
 
 type IssuesAddCommentOption struct {
@@ -144,9 +123,9 @@ type IssuesAddCommentOption struct {
 	Text  string `url:"text,omitempty"`  // Description:"Comment text",ExampleValue:"Won't fix because it doesn't apply to the context"
 }
 
-// Add_comment Add a comment.<br/>Requires authentication and the following permission: 'Browse' on the project of the specified issue.
-func (s *IssuesService) AddComment(opt *IssuesAddCommentOption) (resp *Issues, err error) {
-	err := s.ValidateAddCommentOpt(opt)
+// AddComment Add a comment.<br/>Requires authentication and the following permission: 'Browse' on the project of the specified issue.
+func (s *IssuesService) AddComment(opt *IssuesAddCommentOption) (v *IssuesAddCommentObject, resp *http.Response, err error) {
+	err = s.ValidateAddCommentOpt(opt)
 	if err != nil {
 		return
 	}
@@ -154,9 +133,10 @@ func (s *IssuesService) AddComment(opt *IssuesAddCommentOption) (resp *Issues, e
 	if err != nil {
 		return
 	}
-	err = s.client.Do(req, resp)
+	v = new(IssuesAddCommentObject)
+	resp, err = s.client.Do(req, v)
 	if err != nil {
-		return
+		return nil, resp, err
 	}
 	return
 }
@@ -167,8 +147,8 @@ type IssuesAssignOption struct {
 }
 
 // Assign Assign/Unassign an issue. Requires authentication and Browse permission on project
-func (s *IssuesService) Assign(opt *IssuesAssignOption) (resp *Issues, err error) {
-	err := s.ValidateAssignOpt(opt)
+func (s *IssuesService) Assign(opt *IssuesAssignOption) (v *IssuesAddCommentObject, resp *http.Response, err error) {
+	err = s.ValidateAssignOpt(opt)
 	if err != nil {
 		return
 	}
@@ -176,21 +156,22 @@ func (s *IssuesService) Assign(opt *IssuesAssignOption) (resp *Issues, err error
 	if err != nil {
 		return
 	}
-	err = s.client.Do(req, resp)
+	v = new(IssuesAddCommentObject)
+	resp, err = s.client.Do(req, v)
 	if err != nil {
-		return
+		return nil, resp, err
 	}
 	return
 }
 
 type IssuesAuthorsOption struct {
-	Ps string `url:"ps,omitempty"` // Description:"The size of the list to return",ExampleValue:"25"
+	Ps int    `url:"ps,omitempty"` // Description:"The size of the list to return",ExampleValue:"25"
 	Q  string `url:"q,omitempty"`  // Description:"A pattern to match SCM accounts against",ExampleValue:"luke"
 }
 
 // Authors Search SCM accounts which match a given query
-func (s *IssuesService) Authors(opt *IssuesAuthorsOption) (resp *Issues, err error) {
-	err := s.ValidateAuthorsOpt(opt)
+func (s *IssuesService) Authors(opt *IssuesAuthorsOption) (v *IssuesAuthorsObject, resp *http.Response, err error) {
+	err = s.ValidateAuthorsOpt(opt)
 	if err != nil {
 		return
 	}
@@ -198,9 +179,10 @@ func (s *IssuesService) Authors(opt *IssuesAuthorsOption) (resp *Issues, err err
 	if err != nil {
 		return
 	}
-	err = s.client.Do(req, resp)
+	v = new(IssuesAuthorsObject)
+	resp, err = s.client.Do(req, v)
 	if err != nil {
-		return
+		return nil, resp, err
 	}
 	return
 }
@@ -218,9 +200,9 @@ type IssuesBulkChangeOption struct {
 	SetType           string `url:"set_type,omitempty"`          // Description:"To change the type of the list of issues",ExampleValue:"BUG"
 }
 
-// Bulk_change Bulk change on issues.<br/>Requires authentication.
-func (s *IssuesService) BulkChange(opt *IssuesBulkChangeOption) (resp *Issues, err error) {
-	err := s.ValidateBulkChangeOpt(opt)
+// BulkChange Bulk change on issues.<br/>Requires authentication.
+func (s *IssuesService) BulkChange(opt *IssuesBulkChangeOption) (v *IssuesBulkChangeObject, resp *http.Response, err error) {
+	err = s.ValidateBulkChangeOpt(opt)
 	if err != nil {
 		return
 	}
@@ -228,9 +210,10 @@ func (s *IssuesService) BulkChange(opt *IssuesBulkChangeOption) (resp *Issues, e
 	if err != nil {
 		return
 	}
-	err = s.client.Do(req, resp)
+	v = new(IssuesBulkChangeObject)
+	resp, err = s.client.Do(req, v)
 	if err != nil {
-		return
+		return nil, resp, err
 	}
 	return
 }
@@ -240,8 +223,8 @@ type IssuesChangelogOption struct {
 }
 
 // Changelog Display changelog of an issue.<br/>Requires the 'Browse' permission on the project of the specified issue.
-func (s *IssuesService) Changelog(opt *IssuesChangelogOption) (resp *Issues, err error) {
-	err := s.ValidateChangelogOpt(opt)
+func (s *IssuesService) Changelog(opt *IssuesChangelogOption) (v *IssuesChangelogObject, resp *http.Response, err error) {
+	err = s.ValidateChangelogOpt(opt)
 	if err != nil {
 		return
 	}
@@ -249,9 +232,10 @@ func (s *IssuesService) Changelog(opt *IssuesChangelogOption) (resp *Issues, err
 	if err != nil {
 		return
 	}
-	err = s.client.Do(req, resp)
+	v = new(IssuesChangelogObject)
+	resp, err = s.client.Do(req, v)
 	if err != nil {
-		return
+		return nil, resp, err
 	}
 	return
 }
@@ -260,9 +244,9 @@ type IssuesDeleteCommentOption struct {
 	Comment string `url:"comment,omitempty"` // Description:"Comment key",ExampleValue:"AU-Tpxb--iU5OvuD2FLy"
 }
 
-// Delete_comment Delete a comment.<br/>Requires authentication and the following permission: 'Browse' on the project of the specified issue.
-func (s *IssuesService) DeleteComment(opt *IssuesDeleteCommentOption) (resp *Issues, err error) {
-	err := s.ValidateDeleteCommentOpt(opt)
+// DeleteComment Delete a comment.<br/>Requires authentication and the following permission: 'Browse' on the project of the specified issue.
+func (s *IssuesService) DeleteComment(opt *IssuesDeleteCommentOption) (v *IssuesAddCommentObject, resp *http.Response, err error) {
+	err = s.ValidateDeleteCommentOpt(opt)
 	if err != nil {
 		return
 	}
@@ -270,9 +254,10 @@ func (s *IssuesService) DeleteComment(opt *IssuesDeleteCommentOption) (resp *Iss
 	if err != nil {
 		return
 	}
-	err = s.client.Do(req, resp)
+	v = new(IssuesAddCommentObject)
+	resp, err = s.client.Do(req, v)
 	if err != nil {
-		return
+		return nil, resp, err
 	}
 	return
 }
@@ -282,9 +267,9 @@ type IssuesDoTransitionOption struct {
 	Transition string `url:"transition,omitempty"` // Description:"Transition",ExampleValue:""
 }
 
-// Do_transition Do workflow transition on an issue. Requires authentication and Browse permission on project.<br/>The transitions 'wontfix' and 'falsepositive' require the permission 'Administer Issues'.
-func (s *IssuesService) DoTransition(opt *IssuesDoTransitionOption) (resp *Issues, err error) {
-	err := s.ValidateDoTransitionOpt(opt)
+// DoTransition Do workflow transition on an issue. Requires authentication and Browse permission on project.<br/>The transitions 'wontfix' and 'falsepositive' require the permission 'Administer Issues'.
+func (s *IssuesService) DoTransition(opt *IssuesDoTransitionOption) (v *IssuesAddCommentObject, resp *http.Response, err error) {
+	err = s.ValidateDoTransitionOpt(opt)
 	if err != nil {
 		return
 	}
@@ -292,9 +277,10 @@ func (s *IssuesService) DoTransition(opt *IssuesDoTransitionOption) (resp *Issue
 	if err != nil {
 		return
 	}
-	err = s.client.Do(req, resp)
+	v = new(IssuesAddCommentObject)
+	resp, err = s.client.Do(req, v)
 	if err != nil {
-		return
+		return nil, resp, err
 	}
 	return
 }
@@ -304,9 +290,9 @@ type IssuesEditCommentOption struct {
 	Text    string `url:"text,omitempty"`    // Description:"Comment text",ExampleValue:"Won't fix because it doesn't apply to the context"
 }
 
-// Edit_comment Edit a comment.<br/>Requires authentication and the following permission: 'Browse' on the project of the specified issue.
-func (s *IssuesService) EditComment(opt *IssuesEditCommentOption) (resp *Issues, err error) {
-	err := s.ValidateEditCommentOpt(opt)
+// EditComment Edit a comment.<br/>Requires authentication and the following permission: 'Browse' on the project of the specified issue.
+func (s *IssuesService) EditComment(opt *IssuesEditCommentOption) (v *IssuesAddCommentObject, resp *http.Response, err error) {
+	err = s.ValidateEditCommentOpt(opt)
 	if err != nil {
 		return
 	}
@@ -314,9 +300,10 @@ func (s *IssuesService) EditComment(opt *IssuesEditCommentOption) (resp *Issues,
 	if err != nil {
 		return
 	}
-	err = s.client.Do(req, resp)
+	v = new(IssuesAddCommentObject)
+	resp, err = s.client.Do(req, v)
 	if err != nil {
-		return
+		return nil, resp, err
 	}
 	return
 }
@@ -352,8 +339,8 @@ type IssuesSearchOption struct {
 }
 
 // Search Search for issues.<br>At most one of the following parameters can be provided at the same time: componentKeys, componentUuids, components, componentRootUuids, componentRoots.<br>Requires the 'Browse' permission on the specified project(s).
-func (s *IssuesService) Search(opt *IssuesSearchOption) (resp *Issues, err error) {
-	err := s.ValidateSearchOpt(opt)
+func (s *IssuesService) Search(opt *IssuesSearchOption) (v *IssuesSearchObject, resp *http.Response, err error) {
+	err = s.ValidateSearchOpt(opt)
 	if err != nil {
 		return
 	}
@@ -361,9 +348,10 @@ func (s *IssuesService) Search(opt *IssuesSearchOption) (resp *Issues, err error
 	if err != nil {
 		return
 	}
-	err = s.client.Do(req, resp)
+	v = new(IssuesSearchObject)
+	resp, err = s.client.Do(req, v)
 	if err != nil {
-		return
+		return nil, resp, err
 	}
 	return
 }
@@ -373,9 +361,9 @@ type IssuesSetSeverityOption struct {
 	Severity string `url:"severity,omitempty"` // Description:"New severity",ExampleValue:""
 }
 
-// Set_severity Change severity.<br/>Requires the following permissions:<ul>  <li>'Authentication'</li>  <li>'Browse' rights on project of the specified issue</li>  <li>'Administer Issues' rights on project of the specified issue</li></ul>
-func (s *IssuesService) SetSeverity(opt *IssuesSetSeverityOption) (resp *Issues, err error) {
-	err := s.ValidateSetSeverityOpt(opt)
+// SetSeverity Change severity.<br/>Requires the following permissions:<ul>  <li>'Authentication'</li>  <li>'Browse' rights on project of the specified issue</li>  <li>'Administer Issues' rights on project of the specified issue</li></ul>
+func (s *IssuesService) SetSeverity(opt *IssuesSetSeverityOption) (v *IssuesAddCommentObject, resp *http.Response, err error) {
+	err = s.ValidateSetSeverityOpt(opt)
 	if err != nil {
 		return
 	}
@@ -383,9 +371,10 @@ func (s *IssuesService) SetSeverity(opt *IssuesSetSeverityOption) (resp *Issues,
 	if err != nil {
 		return
 	}
-	err = s.client.Do(req, resp)
+	v = new(IssuesAddCommentObject)
+	resp, err = s.client.Do(req, v)
 	if err != nil {
-		return
+		return nil, resp, err
 	}
 	return
 }
@@ -395,9 +384,9 @@ type IssuesSetTagsOption struct {
 	Tags  string `url:"tags,omitempty"`  // Description:"Comma-separated list of tags. All tags are removed if parameter is empty or not set.",ExampleValue:"security,cwe,misra-c"
 }
 
-// Set_tags Set tags on an issue. <br/>Requires authentication and Browse permission on project
-func (s *IssuesService) SetTags(opt *IssuesSetTagsOption) (resp *Issues, err error) {
-	err := s.ValidateSetTagsOpt(opt)
+// SetTags Set tags on an issue. <br/>Requires authentication and Browse permission on project
+func (s *IssuesService) SetTags(opt *IssuesSetTagsOption) (v *IssuesAddCommentObject, resp *http.Response, err error) {
+	err = s.ValidateSetTagsOpt(opt)
 	if err != nil {
 		return
 	}
@@ -405,9 +394,10 @@ func (s *IssuesService) SetTags(opt *IssuesSetTagsOption) (resp *Issues, err err
 	if err != nil {
 		return
 	}
-	err = s.client.Do(req, resp)
+	v = new(IssuesAddCommentObject)
+	resp, err = s.client.Do(req, v)
 	if err != nil {
-		return
+		return nil, resp, err
 	}
 	return
 }
@@ -417,9 +407,9 @@ type IssuesSetTypeOption struct {
 	Type  string `url:"type,omitempty"`  // Description:"New type",ExampleValue:""
 }
 
-// Set_type Change type of issue, for instance from 'code smell' to 'bug'.<br/>Requires the following permissions:<ul>  <li>'Authentication'</li>  <li>'Browse' rights on project of the specified issue</li>  <li>'Administer Issues' rights on project of the specified issue</li></ul>
-func (s *IssuesService) SetType(opt *IssuesSetTypeOption) (resp *Issues, err error) {
-	err := s.ValidateSetTypeOpt(opt)
+// SetType Change type of issue, for instance from 'code smell' to 'bug'.<br/>Requires the following permissions:<ul>  <li>'Authentication'</li>  <li>'Browse' rights on project of the specified issue</li>  <li>'Administer Issues' rights on project of the specified issue</li></ul>
+func (s *IssuesService) SetType(opt *IssuesSetTypeOption) (v *IssuesAddCommentObject, resp *http.Response, err error) {
+	err = s.ValidateSetTypeOpt(opt)
 	if err != nil {
 		return
 	}
@@ -427,21 +417,22 @@ func (s *IssuesService) SetType(opt *IssuesSetTypeOption) (resp *Issues, err err
 	if err != nil {
 		return
 	}
-	err = s.client.Do(req, resp)
+	v = new(IssuesAddCommentObject)
+	resp, err = s.client.Do(req, v)
 	if err != nil {
-		return
+		return nil, resp, err
 	}
 	return
 }
 
 type IssuesTagsOption struct {
-	Ps string `url:"ps,omitempty"` // Description:"Page size. Must be greater than 0 and less or equal than 100",ExampleValue:"20"
+	Ps int    `url:"ps,omitempty"` // Description:"Page size. Must be greater than 0 and less or equal than 100",ExampleValue:"20"
 	Q  string `url:"q,omitempty"`  // Description:"Limit search to tags that contain the supplied string.",ExampleValue:"misra"
 }
 
 // Tags List tags matching a given query
-func (s *IssuesService) Tags(opt *IssuesTagsOption) (resp *Issues, err error) {
-	err := s.ValidateTagsOpt(opt)
+func (s *IssuesService) Tags(opt *IssuesTagsOption) (v *IssuesTagsObject, resp *http.Response, err error) {
+	err = s.ValidateTagsOpt(opt)
 	if err != nil {
 		return
 	}
@@ -449,9 +440,10 @@ func (s *IssuesService) Tags(opt *IssuesTagsOption) (resp *Issues, err error) {
 	if err != nil {
 		return
 	}
-	err = s.client.Do(req, resp)
+	v = new(IssuesTagsObject)
+	resp, err = s.client.Do(req, v)
 	if err != nil {
-		return
+		return nil, resp, err
 	}
 	return
 }

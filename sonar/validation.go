@@ -2,497 +2,457 @@
 
 package sonargo
 
-import "github.com/magicsong/generate-go-for-sonarqube/pkg/validation"
+func (s *CeService) ValidateActivityOpt(opt *CeActivityOption) error {
+	return nil
+}
+func (s *CeService) ValidateComponentOpt(opt *CeComponentOption) error {
+	return nil
+}
+func (s *CeService) ValidateTaskOpt(opt *CeTaskOption) error {
+	return nil
+}
+func (s *ComponentsService) ValidateSearchOpt(opt *ComponentsSearchOption) error {
+	return nil
+}
+func (s *ComponentsService) ValidateShowOpt(opt *ComponentsShowOption) error {
+	return nil
+}
+func (s *ComponentsService) ValidateTreeOpt(opt *ComponentsTreeOption) error {
+	return nil
+}
+func (s *DuplicationsService) ValidateShowOpt(opt *DuplicationsShowOption) error {
+	return nil
+}
+func (s *FavoritesService) ValidateAddOpt(opt *FavoritesAddOption) error {
+	return nil
+}
+func (s *FavoritesService) ValidateRemoveOpt(opt *FavoritesRemoveOption) error {
+	return nil
+}
+func (s *FavoritesService) ValidateSearchOpt(opt *FavoritesSearchOption) error {
+	return nil
+}
+func (s *IssuesService) ValidateAddCommentOpt(opt *IssuesAddCommentOption) error {
+	return nil
+}
+func (s *IssuesService) ValidateAssignOpt(opt *IssuesAssignOption) error {
+	return nil
+}
+func (s *IssuesService) ValidateAuthorsOpt(opt *IssuesAuthorsOption) error {
+	return nil
+}
+func (s *IssuesService) ValidateBulkChangeOpt(opt *IssuesBulkChangeOption) error {
+	return nil
+}
+func (s *IssuesService) ValidateChangelogOpt(opt *IssuesChangelogOption) error {
+	return nil
+}
+func (s *IssuesService) ValidateDeleteCommentOpt(opt *IssuesDeleteCommentOption) error {
+	return nil
+}
+func (s *IssuesService) ValidateDoTransitionOpt(opt *IssuesDoTransitionOption) error {
+	return nil
+}
+func (s *IssuesService) ValidateEditCommentOpt(opt *IssuesEditCommentOption) error {
+	return nil
+}
+func (s *IssuesService) ValidateSearchOpt(opt *IssuesSearchOption) error {
+	return nil
+}
+func (s *IssuesService) ValidateSetSeverityOpt(opt *IssuesSetSeverityOption) error {
+	return nil
+}
+func (s *IssuesService) ValidateSetTagsOpt(opt *IssuesSetTagsOption) error {
+	return nil
+}
+func (s *IssuesService) ValidateSetTypeOpt(opt *IssuesSetTypeOption) error {
+	return nil
+}
+func (s *IssuesService) ValidateTagsOpt(opt *IssuesTagsOption) error {
+	return nil
+}
+func (s *LanguagesService) ValidateListOpt(opt *LanguagesListOption) error {
+	return nil
+}
+func (s *MeasuresService) ValidateComponentOpt(opt *MeasuresComponentOption) error {
+	return nil
+}
+func (s *MeasuresService) ValidateComponentTreeOpt(opt *MeasuresComponentTreeOption) error {
+	return nil
+}
+func (s *MeasuresService) ValidateSearchHistoryOpt(opt *MeasuresSearchHistoryOption) error {
+	return nil
+}
+func (s *MetricsService) ValidateCreateOpt(opt *MetricsCreateOption) error {
+	return nil
+}
+func (s *MetricsService) ValidateDeleteOpt(opt *MetricsDeleteOption) error {
+	return nil
+}
+func (s *MetricsService) ValidateSearchOpt(opt *MetricsSearchOption) error {
+	return nil
+}
+func (s *MetricsService) ValidateUpdateOpt(opt *MetricsUpdateOption) error {
+	return nil
+}
+func (s *NotificationsService) ValidateAddOpt(opt *NotificationsAddOption) error {
+	return nil
+}
+func (s *NotificationsService) ValidateListOpt(opt *NotificationsListOption) error {
+	return nil
+}
+func (s *NotificationsService) ValidateRemoveOpt(opt *NotificationsRemoveOption) error {
+	return nil
+}
+func (s *PermissionsService) ValidateAddGroupOpt(opt *PermissionsAddGroupOption) error {
+	return nil
+}
+func (s *PermissionsService) ValidateAddGroupToTemplateOpt(opt *PermissionsAddGroupToTemplateOption) error {
+	return nil
+}
+func (s *PermissionsService) ValidateAddProjectCreatorToTemplateOpt(opt *PermissionsAddProjectCreatorToTemplateOption) error {
+	return nil
+}
+func (s *PermissionsService) ValidateAddUserOpt(opt *PermissionsAddUserOption) error {
+	return nil
+}
+func (s *PermissionsService) ValidateAddUserToTemplateOpt(opt *PermissionsAddUserToTemplateOption) error {
+	return nil
+}
+func (s *PermissionsService) ValidateApplyTemplateOpt(opt *PermissionsApplyTemplateOption) error {
+	return nil
+}
+func (s *PermissionsService) ValidateBulkApplyTemplateOpt(opt *PermissionsBulkApplyTemplateOption) error {
+	return nil
+}
+func (s *PermissionsService) ValidateCreateTemplateOpt(opt *PermissionsCreateTemplateOption) error {
+	return nil
+}
+func (s *PermissionsService) ValidateDeleteTemplateOpt(opt *PermissionsDeleteTemplateOption) error {
+	return nil
+}
+func (s *PermissionsService) ValidateRemoveGroupOpt(opt *PermissionsRemoveGroupOption) error {
+	return nil
+}
+func (s *PermissionsService) ValidateRemoveGroupFromTemplateOpt(opt *PermissionsRemoveGroupFromTemplateOption) error {
+	return nil
+}
+func (s *PermissionsService) ValidateRemoveProjectCreatorFromTemplateOpt(opt *PermissionsRemoveProjectCreatorFromTemplateOption) error {
+	return nil
+}
+func (s *PermissionsService) ValidateRemoveUserOpt(opt *PermissionsRemoveUserOption) error {
+	return nil
+}
+func (s *PermissionsService) ValidateRemoveUserFromTemplateOpt(opt *PermissionsRemoveUserFromTemplateOption) error {
+	return nil
+}
 
-func (s *AuthenticationService) ValidateLoginOpt(opt *AuthenticationLoginOption) *valiation.Error {
+func (s *PermissionsService) ValidateSearchTemplatesOpt(opt *PermissionsSearchTemplatesOption) error {
 	return nil
 }
-func (s *CeService) ValidateActivityOpt(opt *CeActivityOption) *valiation.Error {
+func (s *PermissionsService) ValidateSetDefaultTemplateOpt(opt *PermissionsSetDefaultTemplateOption) error {
 	return nil
 }
-func (s *CeService) ValidateComponentOpt(opt *CeComponentOption) *valiation.Error {
+func (s *PermissionsService) ValidateUpdateTemplateOpt(opt *PermissionsUpdateTemplateOption) error {
 	return nil
 }
-func (s *CeService) ValidateTaskOpt(opt *CeTaskOption) *valiation.Error {
+func (s *PluginsService) ValidateInstallOpt(opt *PluginsInstallOption) error {
 	return nil
 }
-func (s *ComponentsService) ValidateSearchOpt(opt *ComponentsSearchOption) *valiation.Error {
+func (s *PluginsService) ValidateInstalledOpt(opt *PluginsInstalledOption) error {
 	return nil
 }
-func (s *ComponentsService) ValidateShowOpt(opt *ComponentsShowOption) *valiation.Error {
+func (s *PluginsService) ValidateUninstallOpt(opt *PluginsUninstallOption) error {
 	return nil
 }
-func (s *ComponentsService) ValidateTreeOpt(opt *ComponentsTreeOption) *valiation.Error {
+func (s *PluginsService) ValidateUpdateOpt(opt *PluginsUpdateOption) error {
 	return nil
 }
-func (s *CustomMeasuresService) ValidateCreateOpt(opt *CustomMeasuresCreateOption) *valiation.Error {
+func (s *ProjectAnalysesService) ValidateCreateEventOpt(opt *ProjectAnalysesCreateEventOption) error {
 	return nil
 }
-func (s *CustomMeasuresService) ValidateDeleteOpt(opt *CustomMeasuresDeleteOption) *valiation.Error {
+func (s *ProjectAnalysesService) ValidateDeleteOpt(opt *ProjectAnalysesDeleteOption) error {
 	return nil
 }
-func (s *CustomMeasuresService) ValidateSearchOpt(opt *CustomMeasuresSearchOption) *valiation.Error {
+func (s *ProjectAnalysesService) ValidateDeleteEventOpt(opt *ProjectAnalysesDeleteEventOption) error {
 	return nil
 }
-func (s *CustomMeasuresService) ValidateUpdateOpt(opt *CustomMeasuresUpdateOption) *valiation.Error {
+func (s *ProjectAnalysesService) ValidateSearchOpt(opt *ProjectAnalysesSearchOption) error {
 	return nil
 }
-func (s *DuplicationsService) ValidateShowOpt(opt *DuplicationsShowOption) *valiation.Error {
+func (s *ProjectAnalysesService) ValidateUpdateEventOpt(opt *ProjectAnalysesUpdateEventOption) error {
 	return nil
 }
-func (s *EditionsService) ValidateApplyLicenseOpt(opt *EditionsApplyLicenseOption) *valiation.Error {
+func (s *ProjectBadgesService) ValidateMeasureOpt(opt *ProjectBadgesMeasureOption) error {
 	return nil
 }
-func (s *EditionsService) ValidatePreviewOpt(opt *EditionsPreviewOption) *valiation.Error {
+func (s *ProjectBadgesService) ValidateQualityGateOpt(opt *ProjectBadgesQualityGateOption) error {
 	return nil
 }
-func (s *FavoritesService) ValidateAddOpt(opt *FavoritesAddOption) *valiation.Error {
+func (s *ProjectBranchesService) ValidateDeleteOpt(opt *ProjectBranchesDeleteOption) error {
 	return nil
 }
-func (s *FavoritesService) ValidateRemoveOpt(opt *FavoritesRemoveOption) *valiation.Error {
+func (s *ProjectBranchesService) ValidateListOpt(opt *ProjectBranchesListOption) error {
 	return nil
 }
-func (s *FavoritesService) ValidateSearchOpt(opt *FavoritesSearchOption) *valiation.Error {
+func (s *ProjectBranchesService) ValidateRenameOpt(opt *ProjectBranchesRenameOption) error {
 	return nil
 }
-func (s *IssuesService) ValidateAddCommentOpt(opt *IssuesAddCommentOption) *valiation.Error {
+func (s *ProjectLinksService) ValidateCreateOpt(opt *ProjectLinksCreateOption) error {
 	return nil
 }
-func (s *IssuesService) ValidateAssignOpt(opt *IssuesAssignOption) *valiation.Error {
+func (s *ProjectLinksService) ValidateDeleteOpt(opt *ProjectLinksDeleteOption) error {
 	return nil
 }
-func (s *IssuesService) ValidateAuthorsOpt(opt *IssuesAuthorsOption) *valiation.Error {
+func (s *ProjectLinksService) ValidateSearchOpt(opt *ProjectLinksSearchOption) error {
 	return nil
 }
-func (s *IssuesService) ValidateBulkChangeOpt(opt *IssuesBulkChangeOption) *valiation.Error {
+func (s *ProjectPullRequestsService) ValidateDeleteOpt(opt *ProjectPullRequestsDeleteOption) error {
 	return nil
 }
-func (s *IssuesService) ValidateChangelogOpt(opt *IssuesChangelogOption) *valiation.Error {
+func (s *ProjectPullRequestsService) ValidateListOpt(opt *ProjectPullRequestsListOption) error {
 	return nil
 }
-func (s *IssuesService) ValidateDeleteCommentOpt(opt *IssuesDeleteCommentOption) *valiation.Error {
+func (s *ProjectTagsService) ValidateSearchOpt(opt *ProjectTagsSearchOption) error {
 	return nil
 }
-func (s *IssuesService) ValidateDoTransitionOpt(opt *IssuesDoTransitionOption) *valiation.Error {
+func (s *ProjectTagsService) ValidateSetOpt(opt *ProjectTagsSetOption) error {
 	return nil
 }
-func (s *IssuesService) ValidateEditCommentOpt(opt *IssuesEditCommentOption) *valiation.Error {
+func (s *ProjectsService) ValidateBulkDeleteOpt(opt *ProjectsBulkDeleteOption) error {
 	return nil
 }
-func (s *IssuesService) ValidateSearchOpt(opt *IssuesSearchOption) *valiation.Error {
+func (s *ProjectsService) ValidateBulkUpdateKeyOpt(opt *ProjectsBulkUpdateKeyOption) error {
 	return nil
 }
-func (s *IssuesService) ValidateSetSeverityOpt(opt *IssuesSetSeverityOption) *valiation.Error {
+func (s *ProjectsService) ValidateCreateOpt(opt *ProjectsCreateOption) error {
 	return nil
 }
-func (s *IssuesService) ValidateSetTagsOpt(opt *IssuesSetTagsOption) *valiation.Error {
+func (s *ProjectsService) ValidateDeleteOpt(opt *ProjectsDeleteOption) error {
 	return nil
 }
-func (s *IssuesService) ValidateSetTypeOpt(opt *IssuesSetTypeOption) *valiation.Error {
+func (s *ProjectsService) ValidateSearchOpt(opt *ProjectsSearchOption) error {
 	return nil
 }
-func (s *IssuesService) ValidateTagsOpt(opt *IssuesTagsOption) *valiation.Error {
+func (s *ProjectsService) ValidateUpdateKeyOpt(opt *ProjectsUpdateKeyOption) error {
 	return nil
 }
-func (s *LanguagesService) ValidateListOpt(opt *LanguagesListOption) *valiation.Error {
+func (s *ProjectsService) ValidateUpdateVisibilityOpt(opt *ProjectsUpdateVisibilityOption) error {
 	return nil
 }
-func (s *MeasuresService) ValidateComponentOpt(opt *MeasuresComponentOption) *valiation.Error {
+func (s *QualitygatesService) ValidateCopyOpt(opt *QualitygatesCopyOption) error {
 	return nil
 }
-func (s *MeasuresService) ValidateComponentTreeOpt(opt *MeasuresComponentTreeOption) *valiation.Error {
+func (s *QualitygatesService) ValidateCreateOpt(opt *QualitygatesCreateOption) error {
 	return nil
 }
-func (s *MeasuresService) ValidateSearchHistoryOpt(opt *MeasuresSearchHistoryOption) *valiation.Error {
+func (s *QualitygatesService) ValidateCreateConditionOpt(opt *QualitygatesCreateConditionOption) error {
 	return nil
 }
-func (s *MetricsService) ValidateCreateOpt(opt *MetricsCreateOption) *valiation.Error {
+func (s *QualitygatesService) ValidateDeleteConditionOpt(opt *QualitygatesDeleteConditionOption) error {
 	return nil
 }
-func (s *MetricsService) ValidateDeleteOpt(opt *MetricsDeleteOption) *valiation.Error {
+func (s *QualitygatesService) ValidateDeselectOpt(opt *QualitygatesDeselectOption) error {
 	return nil
 }
-func (s *MetricsService) ValidateSearchOpt(opt *MetricsSearchOption) *valiation.Error {
+func (s *QualitygatesService) ValidateDestroyOpt(opt *QualitygatesDestroyOption) error {
 	return nil
 }
-func (s *MetricsService) ValidateUpdateOpt(opt *MetricsUpdateOption) *valiation.Error {
+func (s *QualitygatesService) ValidateGetByProjectOpt(opt *QualitygatesGetByProjectOption) error {
 	return nil
 }
-func (s *NotificationsService) ValidateAddOpt(opt *NotificationsAddOption) *valiation.Error {
+func (s *QualitygatesService) ValidateListOpt(opt *QualitygatesListOption) error {
 	return nil
 }
-func (s *NotificationsService) ValidateListOpt(opt *NotificationsListOption) *valiation.Error {
+func (s *QualitygatesService) ValidateProjectStatusOpt(opt *QualitygatesProjectStatusOption) error {
 	return nil
 }
-func (s *NotificationsService) ValidateRemoveOpt(opt *NotificationsRemoveOption) *valiation.Error {
+func (s *QualitygatesService) ValidateRenameOpt(opt *QualitygatesRenameOption) error {
 	return nil
 }
-func (s *PermissionsService) ValidateAddGroupOpt(opt *PermissionsAddGroupOption) *valiation.Error {
+func (s *QualitygatesService) ValidateSearchOpt(opt *QualitygatesSearchOption) error {
 	return nil
 }
-func (s *PermissionsService) ValidateAddGroupToTemplateOpt(opt *PermissionsAddGroupToTemplateOption) *valiation.Error {
+func (s *QualitygatesService) ValidateSelectOpt(opt *QualitygatesSelectOption) error {
 	return nil
 }
-func (s *PermissionsService) ValidateAddProjectCreatorToTemplateOpt(opt *PermissionsAddProjectCreatorToTemplateOption) *valiation.Error {
+func (s *QualitygatesService) ValidateSetAsDefaultOpt(opt *QualitygatesSetAsDefaultOption) error {
 	return nil
 }
-func (s *PermissionsService) ValidateAddUserOpt(opt *PermissionsAddUserOption) *valiation.Error {
+func (s *QualitygatesService) ValidateShowOpt(opt *QualitygatesShowOption) error {
 	return nil
 }
-func (s *PermissionsService) ValidateAddUserToTemplateOpt(opt *PermissionsAddUserToTemplateOption) *valiation.Error {
+func (s *QualitygatesService) ValidateUpdateConditionOpt(opt *QualitygatesUpdateConditionOption) error {
 	return nil
 }
-func (s *PermissionsService) ValidateApplyTemplateOpt(opt *PermissionsApplyTemplateOption) *valiation.Error {
+func (s *QualityProfilesService) ValidateActivateRuleOpt(opt *QualityProfilesActivateRuleOption) error {
 	return nil
 }
-func (s *PermissionsService) ValidateBulkApplyTemplateOpt(opt *PermissionsBulkApplyTemplateOption) *valiation.Error {
+func (s *QualityProfilesService) ValidateActivateRulesOpt(opt *QualityProfilesActivateRulesOption) error {
 	return nil
 }
-func (s *PermissionsService) ValidateCreateTemplateOpt(opt *PermissionsCreateTemplateOption) *valiation.Error {
+func (s *QualityProfilesService) ValidateAddProjectOpt(opt *QualityProfilesAddProjectOption) error {
 	return nil
 }
-func (s *PermissionsService) ValidateDeleteTemplateOpt(opt *PermissionsDeleteTemplateOption) *valiation.Error {
+func (s *QualityProfilesService) ValidateBackupOpt(opt *QualityProfilesBackupOption) error {
 	return nil
 }
-func (s *PermissionsService) ValidateRemoveGroupOpt(opt *PermissionsRemoveGroupOption) *valiation.Error {
+func (s *QualityProfilesService) ValidateChangeParentOpt(opt *QualityProfilesChangeParentOption) error {
 	return nil
 }
-func (s *PermissionsService) ValidateRemoveGroupFromTemplateOpt(opt *PermissionsRemoveGroupFromTemplateOption) *valiation.Error {
+func (s *QualityProfilesService) ValidateChangelogOpt(opt *QualityProfilesChangelogOption) error {
 	return nil
 }
-func (s *PermissionsService) ValidateRemoveProjectCreatorFromTemplateOpt(opt *PermissionsRemoveProjectCreatorFromTemplateOption) *valiation.Error {
+func (s *QualityProfilesService) ValidateCopyOpt(opt *QualityProfilesCopyOption) error {
 	return nil
 }
-func (s *PermissionsService) ValidateRemoveUserOpt(opt *PermissionsRemoveUserOption) *valiation.Error {
+func (s *QualityProfilesService) ValidateCreateOpt(opt *QualityProfilesCreateOption) error {
 	return nil
 }
-func (s *PermissionsService) ValidateRemoveUserFromTemplateOpt(opt *PermissionsRemoveUserFromTemplateOption) *valiation.Error {
+func (s *QualityProfilesService) ValidateDeactivateRuleOpt(opt *QualityProfilesDeactivateRuleOption) error {
 	return nil
 }
-func (s *PermissionsService) ValidateSearchProjectPermissionsOpt(opt *PermissionsSearchProjectPermissionsOption) *valiation.Error {
+func (s *QualityProfilesService) ValidateDeactivateRulesOpt(opt *QualityProfilesDeactivateRulesOption) error {
 	return nil
 }
-func (s *PermissionsService) ValidateSearchTemplatesOpt(opt *PermissionsSearchTemplatesOption) *valiation.Error {
+func (s *QualityProfilesService) ValidateDeleteOpt(opt *QualityProfilesDeleteOption) error {
 	return nil
 }
-func (s *PermissionsService) ValidateSetDefaultTemplateOpt(opt *PermissionsSetDefaultTemplateOption) *valiation.Error {
+func (s *QualityProfilesService) ValidateExportOpt(opt *QualityProfilesExportOption) error {
 	return nil
 }
-func (s *PermissionsService) ValidateUpdateTemplateOpt(opt *PermissionsUpdateTemplateOption) *valiation.Error {
+func (s *QualityProfilesService) ValidateInheritanceOpt(opt *QualityProfilesInheritanceOption) error {
 	return nil
 }
-func (s *PluginsService) ValidateInstallOpt(opt *PluginsInstallOption) *valiation.Error {
+func (s *QualityProfilesService) ValidateProjectsOpt(opt *QualityProfilesProjectsOption) error {
 	return nil
 }
-func (s *PluginsService) ValidateInstalledOpt(opt *PluginsInstalledOption) *valiation.Error {
+func (s *QualityProfilesService) ValidateRemoveProjectOpt(opt *QualityProfilesRemoveProjectOption) error {
 	return nil
 }
-func (s *PluginsService) ValidateUninstallOpt(opt *PluginsUninstallOption) *valiation.Error {
+func (s *QualityProfilesService) ValidateRenameOpt(opt *QualityProfilesRenameOption) error {
 	return nil
 }
-func (s *PluginsService) ValidateUpdateOpt(opt *PluginsUpdateOption) *valiation.Error {
+func (s *QualityProfilesService) ValidateRestoreOpt(opt *QualityProfilesRestoreOption) error {
 	return nil
 }
-func (s *ProjectAnalysesService) ValidateCreateEventOpt(opt *ProjectAnalysesCreateEventOption) *valiation.Error {
+func (s *QualityProfilesService) ValidateSearchOpt(opt *QualityProfilesSearchOption) error {
 	return nil
 }
-func (s *ProjectAnalysesService) ValidateDeleteOpt(opt *ProjectAnalysesDeleteOption) *valiation.Error {
+func (s *QualityProfilesService) ValidateSetDefaultOpt(opt *QualityProfilesSetDefaultOption) error {
 	return nil
 }
-func (s *ProjectAnalysesService) ValidateDeleteEventOpt(opt *ProjectAnalysesDeleteEventOption) *valiation.Error {
+func (s *RulesService) ValidateCreateOpt(opt *RulesCreateOption) error {
 	return nil
 }
-func (s *ProjectAnalysesService) ValidateSearchOpt(opt *ProjectAnalysesSearchOption) *valiation.Error {
+func (s *RulesService) ValidateDeleteOpt(opt *RulesDeleteOption) error {
 	return nil
 }
-func (s *ProjectAnalysesService) ValidateUpdateEventOpt(opt *ProjectAnalysesUpdateEventOption) *valiation.Error {
+func (s *RulesService) ValidateRepositoriesOpt(opt *RulesRepositoriesOption) error {
 	return nil
 }
-func (s *ProjectBadgesService) ValidateMeasureOpt(opt *ProjectBadgesMeasureOption) *valiation.Error {
+func (s *RulesService) ValidateSearchOpt(opt *RulesSearchOption) error {
 	return nil
 }
-func (s *ProjectBadgesService) ValidateQualityGateOpt(opt *ProjectBadgesQualityGateOption) *valiation.Error {
+func (s *RulesService) ValidateShowOpt(opt *RulesShowOption) error {
 	return nil
 }
-func (s *ProjectBranchesService) ValidateDeleteOpt(opt *ProjectBranchesDeleteOption) *valiation.Error {
+func (s *RulesService) ValidateTagsOpt(opt *RulesTagsOption) error {
 	return nil
 }
-func (s *ProjectBranchesService) ValidateListOpt(opt *ProjectBranchesListOption) *valiation.Error {
+func (s *RulesService) ValidateUpdateOpt(opt *RulesUpdateOption) error {
 	return nil
 }
-func (s *ProjectBranchesService) ValidateRenameOpt(opt *ProjectBranchesRenameOption) *valiation.Error {
+func (s *SettingsService) ValidateListDefinitionsOpt(opt *SettingsListDefinitionsOption) error {
 	return nil
 }
-func (s *ProjectLinksService) ValidateCreateOpt(opt *ProjectLinksCreateOption) *valiation.Error {
+func (s *SettingsService) ValidateResetOpt(opt *SettingsResetOption) error {
 	return nil
 }
-func (s *ProjectLinksService) ValidateDeleteOpt(opt *ProjectLinksDeleteOption) *valiation.Error {
+func (s *SettingsService) ValidateSetOpt(opt *SettingsSetOption) error {
 	return nil
 }
-func (s *ProjectLinksService) ValidateSearchOpt(opt *ProjectLinksSearchOption) *valiation.Error {
+func (s *SettingsService) ValidateValuesOpt(opt *SettingsValuesOption) error {
 	return nil
 }
-func (s *ProjectPullRequestsService) ValidateDeleteOpt(opt *ProjectPullRequestsDeleteOption) *valiation.Error {
+func (s *SourcesService) ValidateRawOpt(opt *SourcesRawOption) error {
 	return nil
 }
-func (s *ProjectPullRequestsService) ValidateListOpt(opt *ProjectPullRequestsListOption) *valiation.Error {
+func (s *SourcesService) ValidateSCMOpt(opt *SourcesSCMOption) error {
 	return nil
 }
-func (s *ProjectTagsService) ValidateSearchOpt(opt *ProjectTagsSearchOption) *valiation.Error {
+func (s *SourcesService) ValidateShowOpt(opt *SourcesShowOption) error {
 	return nil
 }
-func (s *ProjectTagsService) ValidateSetOpt(opt *ProjectTagsSetOption) *valiation.Error {
+func (s *SystemService) ValidateChangeLogLevelOpt(opt *SystemChangeLogLevelOption) error {
 	return nil
 }
-func (s *ProjectsService) ValidateBulkDeleteOpt(opt *ProjectsBulkDeleteOption) *valiation.Error {
+func (s *SystemService) ValidateLogsOpt(opt *SystemLogsOption) error {
 	return nil
 }
-func (s *ProjectsService) ValidateBulkUpdateKeyOpt(opt *ProjectsBulkUpdateKeyOption) *valiation.Error {
+func (s *UserGroupsService) ValidateAddUserOpt(opt *UserGroupsAddUserOption) error {
 	return nil
 }
-func (s *ProjectsService) ValidateCreateOpt(opt *ProjectsCreateOption) *valiation.Error {
+func (s *UserGroupsService) ValidateCreateOpt(opt *UserGroupsCreateOption) error {
 	return nil
 }
-func (s *ProjectsService) ValidateDeleteOpt(opt *ProjectsDeleteOption) *valiation.Error {
+func (s *UserGroupsService) ValidateDeleteOpt(opt *UserGroupsDeleteOption) error {
 	return nil
 }
-func (s *ProjectsService) ValidateGhostsOpt(opt *ProjectsGhostsOption) *valiation.Error {
+func (s *UserGroupsService) ValidateRemoveUserOpt(opt *UserGroupsRemoveUserOption) error {
 	return nil
 }
-func (s *ProjectsService) ValidateIndexOpt(opt *ProjectsIndexOption) *valiation.Error {
+func (s *UserGroupsService) ValidateSearchOpt(opt *UserGroupsSearchOption) error {
 	return nil
 }
-func (s *ProjectsService) ValidateProvisionedOpt(opt *ProjectsProvisionedOption) *valiation.Error {
+func (s *UserGroupsService) ValidateUpdateOpt(opt *UserGroupsUpdateOption) error {
 	return nil
 }
-func (s *ProjectsService) ValidateSearchOpt(opt *ProjectsSearchOption) *valiation.Error {
+func (s *UserGroupsService) ValidateUsersOpt(opt *UserGroupsUsersOption) error {
 	return nil
 }
-func (s *ProjectsService) ValidateUpdateKeyOpt(opt *ProjectsUpdateKeyOption) *valiation.Error {
+func (s *UserTokensService) ValidateGenerateOpt(opt *UserTokensGenerateOption) error {
 	return nil
 }
-func (s *ProjectsService) ValidateUpdateVisibilityOpt(opt *ProjectsUpdateVisibilityOption) *valiation.Error {
+func (s *UserTokensService) ValidateRevokeOpt(opt *UserTokensRevokeOption) error {
 	return nil
 }
-func (s *QualitygatesService) ValidateCopyOpt(opt *QualitygatesCopyOption) *valiation.Error {
+func (s *UserTokensService) ValidateSearchOpt(opt *UserTokensSearchOption) error {
 	return nil
 }
-func (s *QualitygatesService) ValidateCreateOpt(opt *QualitygatesCreateOption) *valiation.Error {
+func (s *UsersService) ValidateChangePasswordOpt(opt *UsersChangePasswordOption) error {
 	return nil
 }
-func (s *QualitygatesService) ValidateCreateConditionOpt(opt *QualitygatesCreateConditionOption) *valiation.Error {
+func (s *UsersService) ValidateCreateOpt(opt *UsersCreateOption) error {
 	return nil
 }
-func (s *QualitygatesService) ValidateDeleteConditionOpt(opt *QualitygatesDeleteConditionOption) *valiation.Error {
+func (s *UsersService) ValidateDeactivateOpt(opt *UsersDeactivateOption) error {
 	return nil
 }
-func (s *QualitygatesService) ValidateDeselectOpt(opt *QualitygatesDeselectOption) *valiation.Error {
+func (s *UsersService) ValidateGroupsOpt(opt *UsersGroupsOption) error {
 	return nil
 }
-func (s *QualitygatesService) ValidateDestroyOpt(opt *QualitygatesDestroyOption) *valiation.Error {
+func (s *UsersService) ValidateSearchOpt(opt *UsersSearchOption) error {
 	return nil
 }
-func (s *QualitygatesService) ValidateGetByProjectOpt(opt *QualitygatesGetByProjectOption) *valiation.Error {
+func (s *UsersService) ValidateUpdateOpt(opt *UsersUpdateOption) error {
 	return nil
 }
-func (s *QualitygatesService) ValidateListOpt(opt *QualitygatesListOption) *valiation.Error {
+func (s *WebhooksService) ValidateCreateOpt(opt *WebhooksCreateOption) error {
 	return nil
 }
-func (s *QualitygatesService) ValidateProjectStatusOpt(opt *QualitygatesProjectStatusOption) *valiation.Error {
+func (s *WebhooksService) ValidateDeleteOpt(opt *WebhooksDeleteOption) error {
 	return nil
 }
-func (s *QualitygatesService) ValidateRenameOpt(opt *QualitygatesRenameOption) *valiation.Error {
+func (s *WebhooksService) ValidateDeliveriesOpt(opt *WebhooksDeliveriesOption) error {
 	return nil
 }
-func (s *QualitygatesService) ValidateSearchOpt(opt *QualitygatesSearchOption) *valiation.Error {
+func (s *WebhooksService) ValidateDeliveryOpt(opt *WebhooksDeliveryOption) error {
 	return nil
 }
-func (s *QualitygatesService) ValidateSelectOpt(opt *QualitygatesSelectOption) *valiation.Error {
+func (s *WebhooksService) ValidateListOpt(opt *WebhooksListOption) error {
 	return nil
 }
-func (s *QualitygatesService) ValidateSetAsDefaultOpt(opt *QualitygatesSetAsDefaultOption) *valiation.Error {
-	return nil
-}
-func (s *QualitygatesService) ValidateShowOpt(opt *QualitygatesShowOption) *valiation.Error {
-	return nil
-}
-func (s *QualitygatesService) ValidateUpdateConditionOpt(opt *QualitygatesUpdateConditionOption) *valiation.Error {
-	return nil
-}
-func (s *QualityprofilesService) ValidateActivateRuleOpt(opt *QualityprofilesActivateRuleOption) *valiation.Error {
-	return nil
-}
-func (s *QualityprofilesService) ValidateActivateRulesOpt(opt *QualityprofilesActivateRulesOption) *valiation.Error {
-	return nil
-}
-func (s *QualityprofilesService) ValidateAddProjectOpt(opt *QualityprofilesAddProjectOption) *valiation.Error {
-	return nil
-}
-func (s *QualityprofilesService) ValidateBackupOpt(opt *QualityprofilesBackupOption) *valiation.Error {
-	return nil
-}
-func (s *QualityprofilesService) ValidateChangeParentOpt(opt *QualityprofilesChangeParentOption) *valiation.Error {
-	return nil
-}
-func (s *QualityprofilesService) ValidateChangelogOpt(opt *QualityprofilesChangelogOption) *valiation.Error {
-	return nil
-}
-func (s *QualityprofilesService) ValidateCopyOpt(opt *QualityprofilesCopyOption) *valiation.Error {
-	return nil
-}
-func (s *QualityprofilesService) ValidateCreateOpt(opt *QualityprofilesCreateOption) *valiation.Error {
-	return nil
-}
-func (s *QualityprofilesService) ValidateDeactivateRuleOpt(opt *QualityprofilesDeactivateRuleOption) *valiation.Error {
-	return nil
-}
-func (s *QualityprofilesService) ValidateDeactivateRulesOpt(opt *QualityprofilesDeactivateRulesOption) *valiation.Error {
-	return nil
-}
-func (s *QualityprofilesService) ValidateDeleteOpt(opt *QualityprofilesDeleteOption) *valiation.Error {
-	return nil
-}
-func (s *QualityprofilesService) ValidateExportOpt(opt *QualityprofilesExportOption) *valiation.Error {
-	return nil
-}
-func (s *QualityprofilesService) ValidateInheritanceOpt(opt *QualityprofilesInheritanceOption) *valiation.Error {
-	return nil
-}
-func (s *QualityprofilesService) ValidateProjectsOpt(opt *QualityprofilesProjectsOption) *valiation.Error {
-	return nil
-}
-func (s *QualityprofilesService) ValidateRemoveProjectOpt(opt *QualityprofilesRemoveProjectOption) *valiation.Error {
-	return nil
-}
-func (s *QualityprofilesService) ValidateRenameOpt(opt *QualityprofilesRenameOption) *valiation.Error {
-	return nil
-}
-func (s *QualityprofilesService) ValidateRestoreOpt(opt *QualityprofilesRestoreOption) *valiation.Error {
-	return nil
-}
-func (s *QualityprofilesService) ValidateSearchOpt(opt *QualityprofilesSearchOption) *valiation.Error {
-	return nil
-}
-func (s *QualityprofilesService) ValidateSetDefaultOpt(opt *QualityprofilesSetDefaultOption) *valiation.Error {
-	return nil
-}
-func (s *RulesService) ValidateCreateOpt(opt *RulesCreateOption) *valiation.Error {
-	return nil
-}
-func (s *RulesService) ValidateDeleteOpt(opt *RulesDeleteOption) *valiation.Error {
-	return nil
-}
-func (s *RulesService) ValidateRepositoriesOpt(opt *RulesRepositoriesOption) *valiation.Error {
-	return nil
-}
-func (s *RulesService) ValidateSearchOpt(opt *RulesSearchOption) *valiation.Error {
-	return nil
-}
-func (s *RulesService) ValidateShowOpt(opt *RulesShowOption) *valiation.Error {
-	return nil
-}
-func (s *RulesService) ValidateTagsOpt(opt *RulesTagsOption) *valiation.Error {
-	return nil
-}
-func (s *RulesService) ValidateUpdateOpt(opt *RulesUpdateOption) *valiation.Error {
-	return nil
-}
-func (s *SettingsService) ValidateListDefinitionsOpt(opt *SettingsListDefinitionsOption) *valiation.Error {
-	return nil
-}
-func (s *SettingsService) ValidateResetOpt(opt *SettingsResetOption) *valiation.Error {
-	return nil
-}
-func (s *SettingsService) ValidateSetOpt(opt *SettingsSetOption) *valiation.Error {
-	return nil
-}
-func (s *SettingsService) ValidateValuesOpt(opt *SettingsValuesOption) *valiation.Error {
-	return nil
-}
-func (s *SourcesService) ValidateRawOpt(opt *SourcesRawOption) *valiation.Error {
-	return nil
-}
-func (s *SourcesService) ValidateScmOpt(opt *SourcesScmOption) *valiation.Error {
-	return nil
-}
-func (s *SourcesService) ValidateShowOpt(opt *SourcesShowOption) *valiation.Error {
-	return nil
-}
-func (s *SystemService) ValidateChangeLogLevelOpt(opt *SystemChangeLogLevelOption) *valiation.Error {
-	return nil
-}
-func (s *SystemService) ValidateLogsOpt(opt *SystemLogsOption) *valiation.Error {
-	return nil
-}
-func (s *UserGroupsService) ValidateAddUserOpt(opt *UserGroupsAddUserOption) *valiation.Error {
-	return nil
-}
-func (s *UserGroupsService) ValidateCreateOpt(opt *UserGroupsCreateOption) *valiation.Error {
-	return nil
-}
-func (s *UserGroupsService) ValidateDeleteOpt(opt *UserGroupsDeleteOption) *valiation.Error {
-	return nil
-}
-func (s *UserGroupsService) ValidateRemoveUserOpt(opt *UserGroupsRemoveUserOption) *valiation.Error {
-	return nil
-}
-func (s *UserGroupsService) ValidateSearchOpt(opt *UserGroupsSearchOption) *valiation.Error {
-	return nil
-}
-func (s *UserGroupsService) ValidateUpdateOpt(opt *UserGroupsUpdateOption) *valiation.Error {
-	return nil
-}
-func (s *UserGroupsService) ValidateUsersOpt(opt *UserGroupsUsersOption) *valiation.Error {
-	return nil
-}
-func (s *UserTokensService) ValidateGenerateOpt(opt *UserTokensGenerateOption) *valiation.Error {
-	return nil
-}
-func (s *UserTokensService) ValidateRevokeOpt(opt *UserTokensRevokeOption) *valiation.Error {
-	return nil
-}
-func (s *UserTokensService) ValidateSearchOpt(opt *UserTokensSearchOption) *valiation.Error {
-	return nil
-}
-func (s *UsersService) ValidateChangePasswordOpt(opt *UsersChangePasswordOption) *valiation.Error {
-	return nil
-}
-func (s *UsersService) ValidateCreateOpt(opt *UsersCreateOption) *valiation.Error {
-	return nil
-}
-func (s *UsersService) ValidateDeactivateOpt(opt *UsersDeactivateOption) *valiation.Error {
-	return nil
-}
-func (s *UsersService) ValidateGroupsOpt(opt *UsersGroupsOption) *valiation.Error {
-	return nil
-}
-func (s *UsersService) ValidateSearchOpt(opt *UsersSearchOption) *valiation.Error {
-	return nil
-}
-func (s *UsersService) ValidateUpdateOpt(opt *UsersUpdateOption) *valiation.Error {
-	return nil
-}
-func (s *WebhooksService) ValidateCreateOpt(opt *WebhooksCreateOption) *valiation.Error {
-	return nil
-}
-func (s *WebhooksService) ValidateDeleteOpt(opt *WebhooksDeleteOption) *valiation.Error {
-	return nil
-}
-func (s *WebhooksService) ValidateDeliveriesOpt(opt *WebhooksDeliveriesOption) *valiation.Error {
-	return nil
-}
-func (s *WebhooksService) ValidateDeliveryOpt(opt *WebhooksDeliveryOption) *valiation.Error {
-	return nil
-}
-func (s *WebhooksService) ValidateListOpt(opt *WebhooksListOption) *valiation.Error {
-	return nil
-}
-func (s *WebhooksService) ValidateUpdateOpt(opt *WebhooksUpdateOption) *valiation.Error {
-	return nil
-}
-func (s *WebservicesService) ValidateListOpt(opt *WebservicesListOption) *valiation.Error {
-	return nil
-}
-func (s *WebservicesService) ValidateResponseExampleOpt(opt *WebservicesResponseExampleOption) *valiation.Error {
+func (s *WebhooksService) ValidateUpdateOpt(opt *WebhooksUpdateOption) error {
 	return nil
 }

@@ -1,7 +1,5 @@
 package sonargo
 
-package sonarqube
-
 import (
 	"net/http"
 	"net/url"
@@ -20,6 +18,14 @@ const (
 	basicAuth authType = iota
 	oAuthToken
 	privateToken
+)
+
+const (
+	QualifierSubProject = "BRC"
+	QualifierDirectory  = "DIR"
+	QualifierFile       = "FIL"
+	QualifierProject    = "TRK"
+	QualifierTestFile   = "UTS"
 )
 
 func (c *Client) BaseURL() *url.URL {
@@ -97,6 +103,13 @@ func (c *Client) NewRequest(method, path string, opt interface{}) (*http.Request
 // error if an API error has occurred. If v implements the io.Writer
 // interface, the raw response body will be written to v, without attempting to
 // first decode it.
-func (c *Client) Do(req *http.Request, v interface{}) error {
+func (c *Client) Do(req *http.Request, v interface{}) (*http.Response, error) {
 	return Do(c.httpClient, req, v)
+}
+
+//Paging is used in many apis
+type Paging struct {
+	PageIndex int `json:"pageIndex,omitempty"`
+	PageSize  int `json:"pageSize,omitempty"`
+	Total     int `json:"total,omitempty"`
 }

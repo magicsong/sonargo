@@ -1,22 +1,22 @@
 // Manage user favorites
-package sonargo // import "github.com/magicsong/generate-go-for-sonarqube/pkg/sonargo"
+package sonargo
+
+import "net/http"
 
 type FavoritesService struct {
 	client *Client
 }
 
-type Favorites struct {
-	Favorites []struct {
-		Key          string `json:"key,omitempty"`
-		Name         string `json:"name,omitempty"`
-		Organization string `json:"organization,omitempty"`
-		Qualifier    string `json:"qualifier,omitempty"`
-	} `json:"favorites,omitempty"`
-	Paging struct {
-		PageIndex int64 `json:"pageIndex,omitempty"`
-		PageSize  int64 `json:"pageSize,omitempty"`
-		Total     int64 `json:"total,omitempty"`
-	} `json:"paging,omitempty"`
+type FavoritesSearchObject struct {
+	Favorites []*Favorite `json:"favorites,omitempty"`
+	Paging    Paging      `json:"paging,omitempty"`
+}
+
+type Favorite struct {
+	Key          string `json:"key,omitempty"`
+	Name         string `json:"name,omitempty"`
+	Organization string `json:"organization,omitempty"`
+	Qualifier    string `json:"qualifier,omitempty"`
 }
 
 type FavoritesAddOption struct {
@@ -24,8 +24,8 @@ type FavoritesAddOption struct {
 }
 
 // Add Add a component (project, directory, file etc.) as favorite for the authenticated user.<br>Requires authentication and the following permission: 'Browse' on the project of the specified component.
-func (s *FavoritesService) Add(opt *FavoritesAddOption) (resp *string, err error) {
-	err := s.ValidateAddOpt(opt)
+func (s *FavoritesService) Add(opt *FavoritesAddOption) (resp *http.Response, err error) {
+	err = s.ValidateAddOpt(opt)
 	if err != nil {
 		return
 	}
@@ -33,7 +33,7 @@ func (s *FavoritesService) Add(opt *FavoritesAddOption) (resp *string, err error
 	if err != nil {
 		return
 	}
-	err = s.client.Do(req, resp)
+	resp, err = s.client.Do(req, nil)
 	if err != nil {
 		return
 	}
@@ -45,8 +45,8 @@ type FavoritesRemoveOption struct {
 }
 
 // Remove Remove a component (project, directory, file etc.) as favorite for the authenticated user.<br>Requires authentication.
-func (s *FavoritesService) Remove(opt *FavoritesRemoveOption) (resp *string, err error) {
-	err := s.ValidateRemoveOpt(opt)
+func (s *FavoritesService) Remove(opt *FavoritesRemoveOption) (resp *http.Response, err error) {
+	err = s.ValidateRemoveOpt(opt)
 	if err != nil {
 		return
 	}
@@ -54,7 +54,7 @@ func (s *FavoritesService) Remove(opt *FavoritesRemoveOption) (resp *string, err
 	if err != nil {
 		return
 	}
-	err = s.client.Do(req, resp)
+	resp, err = s.client.Do(req, nil)
 	if err != nil {
 		return
 	}
@@ -62,13 +62,13 @@ func (s *FavoritesService) Remove(opt *FavoritesRemoveOption) (resp *string, err
 }
 
 type FavoritesSearchOption struct {
-	P  string `url:"p,omitempty"`  // Description:"1-based page number",ExampleValue:"42"
-	Ps string `url:"ps,omitempty"` // Description:"Page size. Must be greater than 0 and less or equal than 500",ExampleValue:"20"
+	P  int `url:"p,omitempty"`  // Description:"1-based page number",ExampleValue:"42"
+	Ps int `url:"ps,omitempty"` // Description:"Page size. Must be greater than 0 and less or equal than 500",ExampleValue:"20"
 }
 
 // Search Search for the authenticated user favorites.<br>Requires authentication.
-func (s *FavoritesService) Search(opt *FavoritesSearchOption) (resp *Favorites, err error) {
-	err := s.ValidateSearchOpt(opt)
+func (s *FavoritesService) Search(opt *FavoritesSearchOption) (v *FavoritesSearchObject, resp *http.Response, err error) {
+	err = s.ValidateSearchOpt(opt)
 	if err != nil {
 		return
 	}
@@ -76,9 +76,10 @@ func (s *FavoritesService) Search(opt *FavoritesSearchOption) (resp *Favorites, 
 	if err != nil {
 		return
 	}
-	err = s.client.Do(req, resp)
+	v = new(FavoritesSearchObject)
+	resp, err = s.client.Do(req, v)
 	if err != nil {
-		return
+		return nil, resp, err
 	}
 	return
 }
