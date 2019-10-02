@@ -37,6 +37,7 @@ type Component struct {
 	UUID             string          `json:"uuid,omitempty"`
 	Version          string          `json:"version,omitempty"`
 	Visibility       string          `json:"visibility,omitempty"`
+	Revision         string          `json:"revision,omitempty"`
 }
 
 type ComponentsTreeObject struct {
