@@ -81,3 +81,10 @@ func NewClient(endpoint, username, password string) (*Client, error) {
 	c.Webhooks = &WebhooksService{client: c}
 	return c, nil
 }
+
+func NewClientByToken(endpoint, token string) (*Client, error) {
+	c, err := NewClient(endpoint, "", "")
+	c.token = token
+	c.authType = privateToken
+	return c, err
+}
