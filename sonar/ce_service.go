@@ -22,6 +22,8 @@ type CeTaskObject struct {
 
 type Task struct {
 	AnalysisID         string   `json:"analysisId,omitempty"`
+	Branch             string   `json:"branch,omitempty"`
+	BranchType         string   `json:"branchType,omitempty"`
 	ComponentID        string   `json:"componentId,omitempty"`
 	ComponentKey       string   `json:"componentKey,omitempty"`
 	ComponentName      string   `json:"componentName,omitempty"`
