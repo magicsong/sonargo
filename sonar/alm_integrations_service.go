@@ -24,7 +24,7 @@ func (s *AlmIntegrationsService) ImportGitlabProject(opt *AlmIntegrationsImportG
 	}
 	resp, err = s.client.Do(req, nil)
 	if err != nil {
-		return nil, resp, err
+		return resp, err
 	}
 	return
 }

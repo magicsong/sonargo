@@ -2,7 +2,7 @@
 
 package sonargo
 
-func (s *AlmIntegrationsService) ValidateImportGitlabProjectOpt(opt *ValidateImportGitlabProjectOption) error {
+func (s *AlmIntegrationsService) ValidateImportGitlabProjectOpt(opt *AlmIntegrationsImportGitlabProjectOption) error {
 	return nil
 }
 func (s *CeService) ValidateActivityOpt(opt *CeActivityOption) error {
