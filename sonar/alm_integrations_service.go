@@ -33,7 +33,7 @@ func (s *AlmIntegrationsService) ImportGitlabProject(opt *AlmIntegrationsImportG
 	if err != nil {
 		return
 	}
-	v = new(ProjectsCreateObject)
+	v = new(AlmIntegrationsImportGitlabProjectObject)
 	resp, err = s.client.Do(req, v)
 	if err != nil {
 		return v, resp, err
