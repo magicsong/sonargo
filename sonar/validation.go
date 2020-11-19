@@ -5,6 +5,9 @@ package sonargo
 func (s *AlmIntegrationsService) ValidateImportGitlabProjectOpt(opt *AlmIntegrationsImportGitlabProjectOption) error {
 	return nil
 }
+func (s *AlmSettingsService) ValidateSetGitlabBindingOpt(opt *AlmSettingsSetGitlabBindingOption) error {
+	return nil
+}
 func (s *CeService) ValidateActivityOpt(opt *CeActivityOption) error {
 	return nil
 }

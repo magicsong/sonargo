@@ -51,6 +51,21 @@ func AlmIntegrationsImportGitlabProjectFunc() {
 	fmt.Println(resp.StatusCode)
 }
 
+// Bind a GitLab instance to a project.<br />If the project was already bound to a previous Gitlab ALM instance, the binding will be updated to the new one.Requires the 'Administer' permission on the project
+func AlmSettingsSetGitlabBinding() {
+	opt := &AlmSettingsSetGitlabBindingOption{
+		AlmSetting: "MUST_EDIT_IT",
+		Project:    "MUST_EDIT_IT",
+		Repository: "MUST_EDIT_IT",
+	}
+	resp, err := client.AlmSettings.SetGitlabBinding(opt)
+	if err != nil {
+		fmt.Println(err.Error())
+		os.Exit(1)
+	}
+	fmt.Println(resp.StatusCode)
+}
+
 // CeActivityFunc testing Search for tasks.<br> Requires the system administration permission, or project administration permission if componentId is set.
 func CeActivityFunc() {
 	opt := &CeActivityOption{
