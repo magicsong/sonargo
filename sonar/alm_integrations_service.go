@@ -7,13 +7,24 @@ type AlmIntegrationsService struct {
 	client *Client
 }
 
+type AlmIntegrationsProjectObject struct {
+	Key        string `json:"key,omitempty"`
+	Name       string `json:"name,omitempty"`
+	Qualifier  string `json:"qualifier,omitempty"`
+	Visibility string `json:"visibility,omitempty"`
+}
+
+type AlmIntegrationsImportGitlabProjectObject struct {
+	Project *Project `json:"project,omitempty"`
+}
+
 type AlmIntegrationsImportGitlabProjectOption struct {
 	AlmSetting      string `json:"almSetting,omitempty"`      // Description:"ALM setting key"
 	GitlabProjectID string `json:"gitlabProjectId,omitempty"` // Description: "GitLab project ID"
 }
 
 // Import a GitLab project to SonarQube, creating a new project and configuring MR decoration<br />Requires the 'Create Projects' permission
-func (s *AlmIntegrationsService) ImportGitlabProject(opt *AlmIntegrationsImportGitlabProjectOption) (resp *http.Response, err error) {
+func (s *AlmIntegrationsService) ImportGitlabProject(opt *AlmIntegrationsImportGitlabProjectOption) (v *AlmIntegrationsImportGitlabProjectObject, resp *http.Response, err error) {
 	err = s.ValidateImportGitlabProjectOpt(opt)
 	if err != nil {
 		return
@@ -22,9 +33,10 @@ func (s *AlmIntegrationsService) ImportGitlabProject(opt *AlmIntegrationsImportG
 	if err != nil {
 		return
 	}
-	resp, err = s.client.Do(req, nil)
+	v = new(ProjectsCreateObject)
+	resp, err = s.client.Do(req, v)
 	if err != nil {
-		return resp, err
+		return v, resp, err
 	}
 	return
 }

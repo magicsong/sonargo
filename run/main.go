@@ -43,12 +43,13 @@ func AlmIntegrationsImportGitlabProjectFunc() {
 		AlmSetting:      "MUST_EDIT_IT",
 		GitlabProjectID: "MUST_EDIT_IT",
 	}
-	resp, err := client.AlmIntegrations.ImportGitlabProject(opt)
+	v, resp, err := client.AlmIntegrations.ImportGitlabProject(opt)
 	if err != nil {
 		fmt.Println(err.Error())
 		os.Exit(1)
 	}
 	fmt.Println(resp.StatusCode)
+	spew.Dump(v)
 }
 
 // Bind a GitLab instance to a project.<br />If the project was already bound to a previous Gitlab ALM instance, the binding will be updated to the new one.Requires the 'Administer' permission on the project
