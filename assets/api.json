@@ -1,6 +1,35 @@
 {
     "webServices": [
         {
+            "path": "api/alm_integrations",
+            "description": "Manage ALM integrations",
+            "actions": [
+                {
+                    "key": "import_gitlab_project",
+                    "description": "Import a GitLab project to SonarQube, creating a new project and configuring MR decoration.<br> Requires the 'Create Projects' permission",
+                    "since": "8.5",
+                    "internal": false,
+                    "post": true,
+                    "hasResponseExample": false,
+                    "changelog": [],
+                    "params": [
+                        {
+                            "key": "almSetting",
+                            "description": "ALM setting key",
+                            "required": true,
+                            "internal": false
+                        },
+                        {
+                            "key": "gitlabProjectId",
+                            "description": "GitLab project ID",
+                            "required": true,
+                            "internal": false
+                        }
+                    ]
+                }
+            ]
+        },
+        {
             "path": "api/authentication",
             "description": "Handle authentication. NOT_IN_CLI",
             "actions": [

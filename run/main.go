@@ -37,6 +37,20 @@ func main() {
 	return
 }
 
+// AlmIntegrationsImportGitlabProjectFunc testing Create a project.<br/>Requires 'Create Projects' permission
+func AlmIntegrationsImportGitlabProjectFunc() {
+	opt := &AlmIntegrationsImportGitlabProjectOption{
+		AlmSetting:      "MUST_EDIT_IT",
+		GitlabProjectID: "MUST_EDIT_IT",
+	}
+	resp, err := client.AlmIntegrations.ImportGitlabProject(opt)
+	if err != nil {
+		fmt.Println(err.Error())
+		os.Exit(1)
+	}
+	fmt.Println(resp.StatusCode)
+}
+
 // CeActivityFunc testing Search for tasks.<br> Requires the system administration permission, or project administration permission if componentId is set.
 func CeActivityFunc() {
 	opt := &CeActivityOption{
@@ -2083,10 +2097,10 @@ func RulesTagsFunc() {
 // RulesUpdateFunc testing Update an existing rule.<br>Requires the 'Administer Quality Profiles' permission
 func RulesUpdateFunc() {
 	opt := &RulesUpdateOption{
-		DebtRemediationFnOffset: "",
-		DebtRemediationFnType:   "",
-		DebtRemediationFyCoeff:  "",
-		DebtSubCharacteristic:   "",
+		DebtRemediationFnOffset:    "",
+		DebtRemediationFnType:      "",
+		DebtRemediationFyCoeff:     "",
+		DebtSubCharacteristic:      "",
 		Key:                        "squid:magic_test_rule1",
 		MarkdownDescription:        "",
 		MarkdownNote:               "",
