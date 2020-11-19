@@ -19,8 +19,8 @@ type AlmIntegrationsImportGitlabProjectObject struct {
 }
 
 type AlmIntegrationsImportGitlabProjectOption struct {
-	AlmSetting      string `json:"almSetting,omitempty"`      // Description:"ALM setting key"
-	GitlabProjectID string `json:"gitlabProjectId,omitempty"` // Description: "GitLab project ID"
+	AlmSetting      string `url:"almSetting,omitempty"`      // Description:"ALM setting key"
+	GitlabProjectID string `url:"gitlabProjectId,omitempty"` // Description: "GitLab project ID"
 }
 
 // Import a GitLab project to SonarQube, creating a new project and configuring MR decoration<br />Requires the 'Create Projects' permission
