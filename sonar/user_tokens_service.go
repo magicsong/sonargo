@@ -20,8 +20,9 @@ type UserTokensSearchObject struct {
 }
 
 type UserToken struct {
-	CreatedAt string `json:"createdAt,omitempty"`
-	Name      string `json:"name,omitempty"`
+	CreatedAt          string `json:"createdAt,omitempty"`
+	LastConnectionDate string `json:"lastConnectionDate,omitempty"`
+	Name               string `json:"name,omitempty"`
 }
 
 type UserTokensGenerateOption struct {
