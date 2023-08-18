@@ -12,18 +12,19 @@ type UsersCreateObject struct {
 }
 
 type User struct {
-	Active           bool     `json:"active,omitempty"`
-	Email            string   `json:"email,omitempty"`
-	Local            bool     `json:"local,omitempty"`
-	Login            string   `json:"login,omitempty"`
-	Name             string   `json:"name,omitempty"`
-	ScmAccounts      []string `json:"scmAccounts,omitempty"`
-	Selected         bool     `json:"selected,omitempty"`
-	TokensCount      int      `json:"tokensCount,omitempty"`
-	ExternalIdentity string   `json:"externalIdentity,omitempty"`
-	ExternalProvider string   `json:"externalProvider,omitempty"`
-	Groups           []string `json:"groups,omitempty"`
-	Avatar           string   `json:"avatar,omitempty"`
+	Active             bool     `json:"active,omitempty"`
+	Email              string   `json:"email,omitempty"`
+	Local              bool     `json:"local,omitempty"`
+	Login              string   `json:"login,omitempty"`
+	Name               string   `json:"name,omitempty"`
+	ScmAccounts        []string `json:"scmAccounts,omitempty"`
+	Selected           bool     `json:"selected,omitempty"`
+	TokensCount        int      `json:"tokensCount,omitempty"`
+	ExternalIdentity   string   `json:"externalIdentity,omitempty"`
+	ExternalProvider   string   `json:"externalProvider,omitempty"`
+	Groups             []string `json:"groups,omitempty"`
+	Avatar             string   `json:"avatar,omitempty"`
+	LastConnectionDate string   `json:"lastConnectionDate,omitempty"`
 }
 
 type UsersChangePasswordOption struct {
