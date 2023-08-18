@@ -10,6 +10,8 @@ type Client struct {
 	username, password, token string
 	authType                  authType
 	httpClient                *http.Client
+	AlmIntegrations           *AlmIntegrationsService
+	AlmSettings               *AlmSettingsService
 	Ce                        *CeService
 	Components                *ComponentsService
 	Duplications              *DuplicationsService
@@ -50,6 +52,8 @@ func NewClient(endpoint, username, password string) (*Client, error) {
 			return nil, err
 		}
 	}
+	c.AlmIntegrations = &AlmIntegrationsService{client: c}
+	c.AlmSettings = &AlmSettingsService{client: c}
 	c.Ce = &CeService{client: c}
 	c.Components = &ComponentsService{client: c}
 	c.Duplications = &DuplicationsService{client: c}
